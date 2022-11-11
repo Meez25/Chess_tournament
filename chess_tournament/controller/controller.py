@@ -1,5 +1,6 @@
 from models.models import Player, Match, Round
 from datetime import datetime
+
 import sys
 
 class Controller:
@@ -230,17 +231,15 @@ class Controller:
 
         #self.view.show_welcome_message()
         
-        self.menu_manager.print_menu()
-        self.menu_manager.get_user_option()
+        while(True):
+            self.menu_manager.print_menu()
+            user_action = self.menu_manager.get_user_option()
+            if user_action == "1":
+                self.get_players()
+                self.get_ready()
 
-        self.menu_manager.print_menu()
-        self.menu_manager.get_user_option()
 
-        self.menu_manager.print_menu()
-        self.menu_manager.get_user_option()
-
-        self.menu_manager.print_menu()
-        self.menu_manager.get_user_option()
+        
         
         #self.view.print_menu()
         #self.view.get_user_option()
