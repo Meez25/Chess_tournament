@@ -9,7 +9,7 @@ def main():
     tournament = Tournament(
         "Mon tournoi", "Mulhouse", "09/11/2022", "Rapide", "Description de tournoi"
     )
-    menu_manager = MenuManager(Main_menu(view), view)
+    menu_manager = MenuManager(Main_menu(view))
     program = Controller(tournament, view, menu_manager)
     program.run()
 
