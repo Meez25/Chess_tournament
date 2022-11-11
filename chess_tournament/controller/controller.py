@@ -2,10 +2,11 @@ from models.models import Player, Match, Round
 from datetime import datetime
 import sys
 
-class Controller(object):
-    def __init__(self, tournament, view) -> None:
+class Controller:
+    def __init__(self, tournament, view, menu_manager) -> None:
         self.tournament = tournament
         self.view = view
+        self.menu_manager = menu_manager
 
     def get_player_last_name(self):
         valid_input = 0
@@ -225,17 +226,26 @@ class Controller(object):
 
     def run(self):
 
-        self.view.show_welcome_message()
-        while(True):
-            self.view.print_menu()
-            self.view.get_user_option()
         
-        self.view.print_menu()
-        self.view.get_user_option()
 
-        self.view.print_menu()
-        self.view.get_user_option()
+        #self.view.show_welcome_message()
+        
+        self.menu_manager.print_menu()
+        self.menu_manager.get_user_option()
 
+        self.menu_manager.print_menu()
+        self.menu_manager.get_user_option()
+
+        self.menu_manager.print_menu()
+        self.menu_manager.get_user_option()
+
+        self.menu_manager.print_menu()
+        self.menu_manager.get_user_option()
+        
+        #self.view.print_menu()
+        #self.view.get_user_option()
+
+        
 
         
         # Get 8 players

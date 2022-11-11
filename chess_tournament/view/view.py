@@ -1,25 +1,4 @@
-from abc import ABC, abstractclassmethod
-import sys
-
 class View:
-
-    _state = None
-
-    def __init__(self, state):
-        self.setState(state)
-
-    def setState(self, state):
-        self._state = state
-        self._state.view = self
-
-    def presentState(self):
-        return self._state
-
-    def print_menu(self):
-        self._state.print_menu()
-
-    def get_user_option(self):
-        self._state.get_user_option()
 
     def show_welcome_message(self):
         print(f"{bcolors.OKBLUE}"
@@ -89,51 +68,13 @@ class View:
 
     def display_score_error(self):
         print(f"Le score ne peut être que 0, 0,5 ou 1.")
+
+    def print(self, string):
+        print(string)
+
+    def get_user_option(self):
+        return input("Entrez votre choix : ")
         
-
-class State(ABC):
-    @property
-    def view(self):
-        return self._view
-
-    @view.setter
-    def view(self, view):
-        self._view = view
-
-    @abstractclassmethod
-    def print_menu(self):
-        pass
-
-    @abstractclassmethod
-    def get_user_option(self):
-        pass
-
-class main_menu(State):
-    def print_menu(self):
-        print(f"Que voulez-vous faire ? \n"
-        f"          1 : Créer un nouveau tournoi\n"
-        f"          2 : Ajouter des nouveaux joueurs\n"
-        f"          3 : Quitter\n")
-
-    def get_user_option(self):
-        user_option = input("Entrez votre choix : ")
-        if user_option == '1':
-            self.view.setState(tournament_menu())
-        if user_option == '3':
-            sys.exit()
-
-class tournament_menu(State):
-    def print_menu(self):
-        print(f"Que voulez-vous faire ? \n"
-        f"          1 : Créer un nouveau tournoi\n"
-        f"          2 : Ajouter des nouveaux joueurs\n"
-        f"          3 : Retour\n")
-
-    def get_user_option(self):
-        user_option = input("Entrez votre choix : ")
-        if user_option == '3':
-            self.view.setState(main_menu())
-
 
 class bcolors:
     HEADER = '\033[95m'

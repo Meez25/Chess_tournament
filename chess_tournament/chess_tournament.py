@@ -1,14 +1,16 @@
 from controller.controller import Controller
-from view.view import View, main_menu, tournament_menu
+from controller.menu_manager import MenuManager, Main_menu, Tournament_menu
+from view.view import View
 from models.models import Tournament
 
 
 def main():
-    view = View(main_menu())
+    view = View()
     tournament = Tournament(
         "Mon tournoi", "Mulhouse", "09/11/2022", "Rapide", "Description de tournoi"
     )
-    program = Controller(tournament, view)
+    menu_manager = MenuManager(Main_menu(view), view)
+    program = Controller(tournament, view, menu_manager)
     program.run()
 
 
