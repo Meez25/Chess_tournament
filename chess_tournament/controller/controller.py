@@ -1,7 +1,6 @@
 from models.models import Player, Match, Round
 from datetime import datetime
-from view.view import main_menu, second_menu
-
+import sys
 
 class Controller(object):
     def __init__(self, tournament, view) -> None:
@@ -222,16 +221,23 @@ class Controller(object):
                 else:
                     j = j + 1
 
+                    
+
     def run(self):
 
-        self.view.method_one()
-        self.view.method_two()
-        self.view.setState(second_menu())
-        self.view.method_one()
-        self.view.method_two()
-
-
         self.view.show_welcome_message()
+        while(True):
+            self.view.print_menu()
+            self.view.get_user_option()
+        
+        self.view.print_menu()
+        self.view.get_user_option()
+
+        self.view.print_menu()
+        self.view.get_user_option()
+
+
+        
         # Get 8 players
         self.get_players()
 

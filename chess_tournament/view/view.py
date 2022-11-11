@@ -1,4 +1,5 @@
 from abc import ABC, abstractclassmethod
+import sys
 
 class View:
 
@@ -12,20 +13,22 @@ class View:
         self._state.view = self
 
     def presentState(self):
-        print(f"View is in {type(self._state).__name__}")
+        return self._state
 
-    def method_one(self):
-        self._state.method_one()
+    def print_menu(self):
+        self._state.print_menu()
 
-    def method_two(self):
-        self._state.method_two()
+    def get_user_option(self):
+        self._state.get_user_option()
 
     def show_welcome_message(self):
-        print("Welcome !")
-
-    def show_main_menu(self):
-        print("1. Créer un tournoi")
-        return input("Que voulez-vous faire ? ")
+        print(f"{bcolors.OKBLUE}"
+        f"  _____                            _       _ _   __      _               \n"
+        f" |_   _|__  _   _ _ __ _ __   ___ (_)   __| ( ) /_/  ___| |__   ___  ___ \n"
+        f"   | |/ _ \| | | | '__| '_ \ / _ \| |  / _` |/ / _ \/ __| '_ \ / _ \/ __|\n"
+        f"   | | (_) | |_| | |  | | | | (_) | | | (_| | |  __/ (__| | | |  __/ (__ \n"
+        f"   |_|\___/ \__,_|_|  |_| |_|\___/|_|  \__,_|  \___|\___|_| |_|\___|\___|\n"
+        f"{bcolors.ENDC}")
 
     def ask_player_last_name(self):
         last_name = input("Nom de famille ? : ")
@@ -98,24 +101,48 @@ class State(ABC):
         self._view = view
 
     @abstractclassmethod
-    def method_one(self):
+    def print_menu(self):
         pass
 
     @abstractclassmethod
-    def method_two(self):
+    def get_user_option(self):
         pass
 
 class main_menu(State):
-    def method_one(self):
-        print("main_menu method one")
+    def print_menu(self):
+        print(f"Que voulez-vous faire ? \n"
+        f"          1 : Créer un nouveau tournoi\n"
+        f"          2 : Ajouter des nouveaux joueurs\n"
+        f"          3 : Quitter\n")
 
-    def method_two(self):
-        print("main_menu method two")
+    def get_user_option(self):
+        user_option = input("Entrez votre choix : ")
+        if user_option == '1':
+            self.view.setState(tournament_menu())
+        if user_option == '3':
+            sys.exit()
 
-class second_menu(State):
-    def method_one(self):
-        print("second_menu method one")
+class tournament_menu(State):
+    def print_menu(self):
+        print(f"Que voulez-vous faire ? \n"
+        f"          1 : Créer un nouveau tournoi\n"
+        f"          2 : Ajouter des nouveaux joueurs\n"
+        f"          3 : Retour\n")
 
-    def method_two(self):
-        print("second_menu method two")
+    def get_user_option(self):
+        user_option = input("Entrez votre choix : ")
+        if user_option == '3':
+            self.view.setState(main_menu())
+
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
