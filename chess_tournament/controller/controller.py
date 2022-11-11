@@ -9,10 +9,8 @@ class Controller:
         self.menu_manager = MenuManager(Main_menu(view))
         self.tournament_manager = TournamentManager(tournament, view)
 
-    
-
     def get_menu_running(self):
-        while(True):
+        while True:
             self.menu_manager.print_menu()
             user_action = self.menu_manager.get_user_option()
             if user_action == "Create tournament":
@@ -21,6 +19,3 @@ class Controller:
     def run(self):
 
         self.get_menu_running()
-
-        
-        

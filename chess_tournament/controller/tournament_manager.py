@@ -1,6 +1,7 @@
 from models.models import Player, Match, Round
 from datetime import datetime
 
+
 class TournamentManager:
     def __init__(self, tournament, view) -> None:
         self.tournament = tournament
@@ -9,7 +10,7 @@ class TournamentManager:
     def handle_tournament(self):
         # Get 8 players
         self.get_players()
-        
+
         # Ask if we can start the tournament
         self.get_ready()
 
@@ -148,10 +149,6 @@ class TournamentManager:
             else:
                 print("Erreur dans get_player_elo")
 
-    
-
-    
-
     def create_first_round(self):
         # Create first round
         first_round = Round("Round 1", datetime.now())
@@ -257,7 +254,7 @@ class TournamentManager:
             if not copy_of_list_of_player:
                 found = True
             while not found:
-                
+
                 player = copy_of_list_of_player[0]
                 if copy_of_list_of_player[j] not in player.get_already_played():
                     found = True

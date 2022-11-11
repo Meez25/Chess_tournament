@@ -4,7 +4,7 @@ class Match:
         self.score2 = 0
         self.player1 = player1
         self.player2 = player2
-        
+
     def set_score_player_1(self, new_score):
         self.score1 = new_score
 
@@ -12,13 +12,13 @@ class Match:
         self.score2 = new_score
 
     def get_result(self):
-        return {[self.player1, self.score1],[self.player2, self.score2]}
+        return {[self.player1, self.score1], [self.player2, self.score2]}
 
     def show_players(self) -> str:
-        return([self.player1, self.player2])
+        return [self.player1, self.player2]
 
     def get_players(self):
-        return([self.player1, self.player2])
+        return [self.player1, self.player2]
 
     def add_score_to_players(self):
         self.player1.set_score(self.player1.get_score() + self.score1)
@@ -29,6 +29,7 @@ class Match:
 
     def __repr__(self):
         return f"{self.player1.last_name} contre {self.player2.last_name}"
+
 
 """
 pair of player
@@ -52,7 +53,6 @@ class Player:
         self.score = 0
         self.already_played = []
 
-    
     def __str__(self) -> str:
         return (
             f"Nom de famille : {self.last_name}\n"
@@ -84,7 +84,6 @@ class Player:
 
     def get_first_name(self):
         return self.first_name
-
 
 
 class Round:

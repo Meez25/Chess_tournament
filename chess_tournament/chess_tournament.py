@@ -8,7 +8,7 @@ def main():
     tournament = Tournament(
         "Mon tournoi", "Mulhouse", "09/11/2022", "Rapide", "Description de tournoi"
     )
-    
+
     program = Controller(tournament, view)
     program.run()
 

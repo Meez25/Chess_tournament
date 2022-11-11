@@ -1,13 +1,14 @@
 class View:
-
     def show_banner(self):
-        print(f"{bcolors.OKBLUE}"
-        f"  _____                            _       _ _   __      _               \n"
-        f" |_   _|__  _   _ _ __ _ __   ___ (_)   __| ( ) /_/  ___| |__   ___  ___ \n"
-        f"   | |/ _ \| | | | '__| '_ \ / _ \| |  / _` |/ / _ \/ __| '_ \ / _ \/ __|\n"
-        f"   | | (_) | |_| | |  | | | | (_) | | | (_| | |  __/ (__| | | |  __/ (__ \n"
-        f"   |_|\___/ \__,_|_|  |_| |_|\___/|_|  \__,_|  \___|\___|_| |_|\___|\___|\n"
-        f"{bcolors.ENDC}")
+        print(
+            f"{bcolors.OKBLUE}"
+            f"  _____                            _       _ _   __      _               \n"
+            f" |_   _|__  _   _ _ __ _ __   ___ (_)   __| ( ) /_/  ___| |__   ___  ___ \n"
+            f"   | |/ _ \| | | | '__| '_ \ / _ \| |  / _` |/ / _ \/ __| '_ \ / _ \/ __|\n"
+            f"   | | (_) | |_| | |  | | | | (_) | | | (_| | |  __/ (__| | | |  __/ (__ \n"
+            f"   |_|\___/ \__,_|_|  |_| |_|\___/|_|  \__,_|  \___|\___|_| |_|\___|\___|\n"
+            f"{bcolors.ENDC}"
+        )
 
     def ask_player_last_name(self):
         last_name = input("Nom de famille ? : ")
@@ -58,12 +59,16 @@ class View:
         print("Voici la liste des matchs à jouer : ")
 
     def display_nth_round_games(self, player1, player2):
-        print(f"{player1.last_name} {player1.first_name} contre "
-        f"{player2.last_name} {player2.first_name}")
+        print(
+            f"{player1.last_name} {player1.first_name} contre "
+            f"{player2.last_name} {player2.first_name}"
+        )
 
     def ask_results(self, player):
-        score_player = input(f"Quel est le résultat de"
-        f" {player.last_name} {player.first_name} ? (0, 0.5, 1) ")
+        score_player = input(
+            f"Quel est le résultat de"
+            f" {player.last_name} {player.first_name} ? (0, 0.5, 1) "
+        )
         return score_player
 
     def display_score_error(self):
@@ -74,16 +79,15 @@ class View:
 
     def get_user_option(self):
         return input("Entrez votre choix : ")
-        
+
 
 class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
+    HEADER = "\033[95m"
+    OKBLUE = "\033[94m"
+    OKCYAN = "\033[96m"
+    OKGREEN = "\033[92m"
+    WARNING = "\033[93m"
+    FAIL = "\033[91m"
+    ENDC = "\033[0m"
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
