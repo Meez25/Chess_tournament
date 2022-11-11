@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import sys
+import os
 
 class MenuManager:
     _state = None
@@ -7,7 +8,8 @@ class MenuManager:
     def __init__(self, state) -> None:
         self.transition_to(state)
         self.view = state.view
-        self.view.show_welcome_message()
+        os.system('cls' if os.name == 'nt' else 'clear')
+        self.view.show_banner()
 
     def transition_to(self, state):
         self._state = state
@@ -55,6 +57,8 @@ class Main_menu(State):
             self.menu_manager.transition_to(Add_player_menu(self.view))
         elif user_option == '3':
             self.go_back()
+        os.system('cls' if os.name == 'nt' else 'clear')
+        self.view.show_banner()
 
     def go_back(self) -> None:
         sys.exit()
@@ -75,6 +79,8 @@ class Tournament_menu(State):
             return "Create tournament"
         elif user_option == '2':
             self.menu_manager.transition_to(Main_menu(self.view))
+        os.system('cls' if os.name == 'nt' else 'clear')
+        self.view.show_banner()
 
     def go_back(self) -> None:
         self.menu_manager.transition_to(Main_menu(self.view))
@@ -95,6 +101,8 @@ class Add_player_menu(State):
             self.view.print("Ajout de joueur à faire !")
         elif user_option == '2':
             self.menu_manager.transition_to(Main_menu(self.view))
+        os.system('cls' if os.name == 'nt' else 'clear')
+        self.view.show_banner()
 
     def go_back(self) -> None:
         self.menu_manager.transition_to(Main_menu(self.view))

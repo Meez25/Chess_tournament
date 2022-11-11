@@ -1,6 +1,6 @@
 class View:
 
-    def show_welcome_message(self):
+    def show_banner(self):
         print(f"{bcolors.OKBLUE}"
         f"  _____                            _       _ _   __      _               \n"
         f" |_   _|__  _   _ _ __ _ __   ___ (_)   __| ( ) /_/  ___| |__   ___  ___ \n"

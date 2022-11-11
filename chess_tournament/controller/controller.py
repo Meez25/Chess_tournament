@@ -22,22 +22,5 @@ class Controller:
 
         self.get_menu_running()
 
-        #self.view.show_welcome_message()
         
-        
-                
-
-
-        
-        
-        #self.view.print_menu()
-        #self.view.get_user_option()
-
-        
-
-        
-        
-        
-
-        # Create the round, sort the players, make the matchs
         
