@@ -157,3 +157,7 @@ class Tournament:
         for i in range(self.NUMBER_OF_PLAYER):
             self.list_of_players.append(Player.get())
     """
+
+class Player_Database:
+    def __init__(self, ) -> None:
+        pass

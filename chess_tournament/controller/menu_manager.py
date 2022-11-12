@@ -46,10 +46,10 @@ class Main_menu(State):
 
     def print_menu(self) -> None:
         self.view.print(
-            f"Que voulez-vous faire ?\n"
+            f"Que voulez-vous faire ?\n\n"
             f"          1 : Créer un tournoi\n"
-            f"          2 : Ajouter des joueurs\n"
-            f"          3 : Quitter l'application"
+            f"          2 : Gérer les joueurs\n"
+            f"          3 : Quitter l'application\n"
         )
 
     def get_user_option(self) -> None:
@@ -57,7 +57,7 @@ class Main_menu(State):
         if user_option == "1":
             self.menu_manager.transition_to(Tournament_menu(self.view))
         elif user_option == "2":
-            self.menu_manager.transition_to(Add_player_menu(self.view))
+            self.menu_manager.transition_to(Player_menu(self.view))
         elif user_option == "3":
             self.go_back()
         os.system("cls" if os.name == "nt" else "clear")
@@ -72,10 +72,12 @@ class Tournament_menu(State):
         self.view = view
 
     def print_menu(self) -> None:
+        os.system("cls" if os.name == "nt" else "clear")
+        self.view.show_banner()
         self.view.print(
-            f"Que voulez-vous faire ?\n"
+            f"Que voulez-vous faire ?\n\n"
             f"          1 : Créer un tournoi\n"
-            f"          2 : Retour"
+            f"          2 : Retour\n"
         )
 
     def get_user_option(self) -> None:
@@ -91,25 +93,31 @@ class Tournament_menu(State):
         self.menu_manager.transition_to(Main_menu(self.view))
 
 
-class Add_player_menu(State):
+class Player_menu(State):
     def __init__(self, view) -> None:
         self.view = view
 
     def print_menu(self) -> None:
+        os.system("cls" if os.name == "nt" else "clear")
+        self.view.show_banner()
         self.view.print(
-            f"Que voulez-vous faire ?\n"
+            f"Que voulez-vous faire ?\n\n"
             f"          1 : Ajouter un joueur\n"
-            f"          2 : Retour"
+            f"          2 : Voir la liste des joueurs\n"
+            f"          3 : Retour\n"
         )
 
     def get_user_option(self) -> None:
         user_option = self.view.get_user_option()
         if user_option == "1":
-            self.view.print("Ajout de joueur à faire !")
-        elif user_option == "2":
+            return f"Add a player"
+        if user_option == "2":
+            return f"See list of players"
+        elif user_option == "3":
             self.menu_manager.transition_to(Main_menu(self.view))
-        os.system("cls" if os.name == "nt" else "clear")
-        self.view.show_banner()
+        
 
     def go_back(self) -> None:
         self.menu_manager.transition_to(Main_menu(self.view))
+
+    
