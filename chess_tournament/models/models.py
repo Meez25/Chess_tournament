@@ -1,11 +1,13 @@
 import itertools
 
+
 class Match:
     def __init__(self, player1, player2) -> None:
         self.score1 = 0
         self.score2 = 0
         self.player1 = player1
         self.player2 = player2
+        self.result = {}
 
     def set_score_player_1(self, new_score):
         self.score1 = new_score
@@ -26,6 +28,14 @@ class Match:
         self.player1.set_score(self.player1.get_score() + self.score1)
         self.player2.set_score(self.player2.get_score() + self.score2)
 
+    def set_result(self, player, score):
+        self.result = list(self.result)
+        self.result.append([player, score])
+        self.result = tuple(self.result)
+
+    def get_result(self):
+        return self.result
+
     def __str__(self):
         return f"{self.player1.last_name} contre {self.player2.last_name}"
 
@@ -33,20 +43,9 @@ class Match:
         return f"{self.player1.last_name} contre {self.player2.last_name}"
 
 
-"""
-pair of player
-result
-
-
-get score()
-Un match unique doit être stocké sous la forme d'un tuple contenant deux listes, chacune contenant deux éléments : 
-une référence à une instance de joueur et un score. Les matchs multiples doivent être stockés sous forme de liste sur l'instance du tour. 
-
-"""
-
-
 class Player:
     newid = itertools.count()
+
     def __init__(self, last_name, first_name, date_of_birth, sex, elo) -> None:
         self.last_name = last_name
         self.first_name = first_name
@@ -63,6 +62,21 @@ class Player:
             f"Date de naissance : {self.date_of_birth}, "
             f"Elo : {self.elo}"
         )
+
+    def set_last_name(self, last_name):
+        self.last_name = last_name
+
+    def set_first_name(self, first_name):
+        self.first_name = first_name
+
+    def set_date_of_birth(self, date_of_birth):
+        self.date_of_birth = date_of_birth
+
+    def set_sex(self, sex):
+        self.sex = sex
+
+    def set_elo(self, elo):
+        self.elo = elo
 
     def __repr__(self):
         return self.last_name
@@ -94,6 +108,9 @@ class Player:
     def get_id(self):
         return self.id
 
+    def get_date_birthday(self):
+        return self.date_of_birth
+
 
 class Round:
     def __init__(self, name, start_date) -> None:
@@ -107,13 +124,8 @@ class Round:
     def get_list_of_match(self):
         return self.list_of_match
 
-
-"""
-List of match
-Name of round (Round 1, Round 2, etc)
-Date and hour of start (automatic at creation of round)
-Date and hour of end (automatic at round finished)
-"""
+    def set_end_date(self, date):
+        self.end_date = date
 
 
 class Tournament:
@@ -155,9 +167,3 @@ class Tournament:
             f"Contrôle du temps : {self.time_control}\n"
             f"Description : {self.description}"
         )
-
-    """
-    def get_list_of_players(self):
-        for i in range(self.NUMBER_OF_PLAYER):
-            self.list_of_players.append(Player.get())
-    """
