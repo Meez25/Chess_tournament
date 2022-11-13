@@ -1,5 +1,8 @@
+import os
+
 class View:
     def show_banner(self):
+        """Display the banner in the console"""
         print(
             f"{bcolors.OKBLUE}"
             f"  _____                            _       _ _   __      _               \n"
@@ -11,60 +14,76 @@ class View:
         )
 
     def ask_player_last_name(self):
+        """Ask for the player's name"""
         last_name = input("Nom de famille ? : ")
         return last_name
 
     def display_empty_last_name_error(self):
+        """Error message : player's name not found"""
         print("Désolé, le nom du joueur n'a pas été renseigné.")
 
     def ask_player_first_name(self):
+        """Ask for the player's first name"""
         first_name = input("Prénom ? : ")
         return first_name
 
     def display_empty_first_name_error(self):
+        """Error message : player's name empty"""
         print("Désolé, le prénom du joueur n'a pas été renseigné.")
 
     def ask_player_birthday(self):
+        """Ask for the player's birthday"""
         birthday = input("Date de naissance ? : ")
         return birthday
 
     def display_empty_birthday_error(self):
+        """Error message : player's birthday is empty"""
         print("Désolé, la date de naissance n'a pas été renseigné.")
 
     def ask_player_sex(self):
+        """Ask for the player's sex"""
         sex = input("Sexe ? : ")
         return sex
 
     def display_empty_sex_error(self):
+        """Error message : player's sex is empty"""
         print("Désolé, le sexe n'a pas été renseigné.")
 
     def ask_player_elo(self):
+        """Ask for the player's elo"""
         elo = input("Elo ? : ")
         return elo
 
     def display_empty_elo_error(self):
+        """Error message : player's elo is empty"""
         print("Le elo n'a pas été renseigné.")
 
     def display_elo_not_number_error(self):
+        """Error message : player's elo is not number only"""
         print("Le elo doit être composé de chiffre.")
 
     def ask_start_tournament(self, tournament_name):
+        """Ask if ready to start the tournament"""
         ready = input(f"Prêt à démarrer le tournoi {tournament_name} ? o/n ")
         return ready
 
     def display_yes_or_no_error(self):
+        """Generic yes/no error"""
         print("La réponse doit être 'o' ou 'n'")
 
     def announce_matches(self):
+        """Introduces match to play"""
         print("Voici la liste des matchs à jouer : ")
 
     def display_nth_round_games(self, player1, player2):
+        """Introduce matches generated"""
         print(
             f"{player1.last_name} {player1.first_name} contre "
             f"{player2.last_name} {player2.first_name}"
         )
 
     def ask_results(self, player):
+        """Ask for match results"""
         score_player = input(
             f"Quel est le résultat de"
             f" {player.last_name} {player.first_name} ? (0, 0.5, 1) "
@@ -72,7 +91,12 @@ class View:
         return score_player
 
     def display_score_error(self):
+        """Match result input error"""
         print(f"Le score ne peut être que 0, 0,5 ou 1.")
+
+    def tournament_added_successfully(self):
+        """Match added successfully"""
+        print("\nTournoi ajouté avec succès !")
 
     def print(self, string):
         print(string)
@@ -80,6 +104,138 @@ class View:
     def get_user_option(self):
         return input("Entrez votre choix : ")
 
+    def get_index_of_player(self):
+        return input("Entrez l'index de votre choix : ")
+
+    def press_enter_to_continue(self):
+        input("\nAppuyez sur Entrée pour continuer...\n")
+
+    def clean_console(self):
+        os.system("cls" if os.name == "nt" else "clear")
+
+    def get_tournament_name(self):
+        name = input("Nom du tournoi ? : ")
+        return name
+
+    def get_tournament_location(self):
+        tournament_location = input("Lieu ? : ")
+        return tournament_location
+
+    def get_tournament_date(self):
+        tournament_date = input("Date ? : ")
+        return tournament_date
+
+    def get_time_control(self):
+        time_control = input("Contrôle du temps ? : ")
+        return time_control
+
+    def get_tournament_description(self):
+        description = input("Description ? : ")
+        return description
+
+    def get_tournament_to_delete(self):
+        tournament_to_delete = input("Nom du tournoi à supprimer : ")
+        return tournament_to_delete
+
+    def get_tournament_to_select(self):
+        tournament_to_select = input("Nom du tournoi à sélectionner : ")
+        return tournament_to_select
+
+    def get_player_to_delete_from_tournament(self):
+        player_to_delete = input("[Index] du joueur à supprimer du tournoi: ")
+        return player_to_delete
+
+    def player_removed_from_tournament(self, player_to_delete):
+        print(f"\nJoueur {player_to_delete} supprimé du tournoi.")
+
+    def player_not_found(self, player):
+        print(f'Joueur "{player}" non trouvé')
+
+    def display_tournament_menu(self, current_tournament):
+        if not current_tournament:
+            print(f"Aucun tournoi n'est sélectionné\n")
+        else:
+            print(f'Le tournoi "{current_tournament}" est sélectionné.\n')
+                
+        print(
+            f"Que voulez-vous faire ?\n\n"
+            f"          1 : Créer un nouveau tournoi\n"
+            f"          2 : Voir la liste des tournois\n"
+            f"          3 : Gérer les joueurs du tournoi sélectionné\n"
+            f"          4 : Sélectionner un autre tournoi\n"
+            f"          5 : Supprimer un tournoi\n"
+            f"          6 : Démarrer le tournoi !\n"
+            f"          7 : Retour\n"
+        )
+
+    def display_main_menu(self):
+        print(
+            f"Que voulez-vous faire ?\n\n"
+            f"          1 : Gestion des tournois\n"
+            f"          2 : Gérer les joueurs\n"
+            f"          3 : Quitter l'application\n"
+        )
+
+    def display_player_menu(self):
+        print(
+            f"Que voulez-vous faire ?\n\n"
+            f"          1 : Ajouter un joueur\n"
+            f"          2 : Voir la liste des joueurs\n"
+            f"          3 : Retour\n"
+        )
+
+    def display_add_player_to_tournament(self, current_tournament):
+        if not current_tournament:
+            print(f"Aucun tournoi n'est sélectionné\n")
+        else:
+            print(f'Le tournoi "{current_tournament}" est sélectionné.\n')
+
+        print(
+            f"Que voulez-vous faire ?\n\n"
+            f"          1 : Ajouter un nouveau joueur\n"
+            f"          2 : Ajouter un joueur existant\n"
+            f"          3 : Afficher la liste des joueurs ajoutés au tournoi\n"
+            f"          4 : Supprimer un joueur du tournoi\n"
+            f"          5 : Retour\n"
+        )
+
+    def display_no_tournament_selected(self):
+        print(
+            f"Aucun tournoi n'est sélectionné\n"
+            f"Veuillez sélectionner un tournoi afin d'y ajouter les joueurs"
+        )
+
+    def display_no_player_in_tournament(self):
+        print(
+            f"Aucun joueur n'est ajouté au tournoi\n"
+            f"Veuillez ajouter des joueurs"
+        )
+
+    def which_player_to_delete(self, list_of_player):
+        print("Quel joueur voulez-vous supprimer ?\n")
+        print("[Index] - Nom, Prénom, Elo, Sexe\n")
+        for player in list_of_player:
+            print(f"[{player.get_id()}] - {player.get_last_name()}, "
+            f"{player.get_first_name()}, {player.get_elo()}, "
+            f"{player.get_sex()}\n")
+
+    def display_existing_player_to_add(self, list_of_player):
+        print("Quel joueur voulez-vous ajouter ?\n")
+        print("[Index] - Nom, Prénom, Elo, Sexe\n")
+        for player in list_of_player:
+            print(f"[{player.get_id()}] - {player.get_last_name()}, "
+            f"{player.get_first_name()}, {player.get_elo()}, "
+            f"{player.get_sex()}\n")
+
+    def display_list_of_player(self, list_of_player):
+        for player in list_of_player:
+            print(player)
+
+    def display_no_existing_player(self):
+        print("Il n'y a aucun joueur dans le système. Veuillez en ajouter.")
+
+    def player_already_in_tournament(self):
+        print("\nLe joueur est déjà dans le tournoi.")
 
 class bcolors:
     HEADER = "\033[95m"

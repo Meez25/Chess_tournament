@@ -1,3 +1,5 @@
+import itertools
+
 class Match:
     def __init__(self, player1, player2) -> None:
         self.score1 = 0
@@ -44,6 +46,7 @@ une référence à une instance de joueur et un score. Les matchs multiples doiv
 
 
 class Player:
+    newid = itertools.count()
     def __init__(self, last_name, first_name, date_of_birth, sex, elo) -> None:
         self.last_name = last_name
         self.first_name = first_name
@@ -52,16 +55,13 @@ class Player:
         self.elo = elo
         self.score = 0
         self.already_played = []
+        self.id = next(Player.newid)
 
     def __str__(self) -> str:
         return (
-            f"Nom de famille : {self.last_name}\n"
-            f"Prénom : {self.first_name}\n"
-            f"Date de naissance : {self.date_of_birth}\n"
-            f"Sexe : {self.sex}\n"
-            f"Elo : {self.elo}\n"
-            f"Score : {self.score}\n"
-            f"Already played : {self.already_played}"
+            f"Nom et prénom : {self.last_name} {self.first_name}, "
+            f"Date de naissance : {self.date_of_birth}, "
+            f"Elo : {self.elo}"
         )
 
     def __repr__(self):
@@ -84,6 +84,15 @@ class Player:
 
     def get_first_name(self):
         return self.first_name
+
+    def get_elo(self):
+        return self.elo
+
+    def get_sex(self):
+        return self.sex
+
+    def get_id(self):
+        return self.id
 
 
 class Round:
@@ -132,16 +141,11 @@ class Tournament:
     def add_player_in_list(self, player):
         self.list_of_players.append(player)
 
-    """
-    @classmethod
-    def get(cls):
-        name = input("Nom du tournoi ? : ")
-        location = input("Lieu ? : ")
-        date = input("Date ? : ")
-        time_control = input("Contrôle du temps ? : ")
-        description = input("Description ? : ")
-        return cls(name, location, date, time_control, description)
-    """
+    def remove_player_in_list(self, player):
+        self.list_of_players.remove(player)
+
+    def get_tournament_name(self):
+        return self.name
 
     def __str__(self) -> str:
         return (
@@ -157,7 +161,3 @@ class Tournament:
         for i in range(self.NUMBER_OF_PLAYER):
             self.list_of_players.append(Player.get())
     """
-
-class Player_Database:
-    def __init__(self, ) -> None:
-        pass

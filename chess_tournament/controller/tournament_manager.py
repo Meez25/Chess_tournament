@@ -1,19 +1,153 @@
-from models.models import Player, Match, Round
+from models.models import Player, Match, Round, Tournament
 from datetime import datetime
 
 
 class TournamentManager:
-    def __init__(self, tournament, view) -> None:
-        self.tournament = tournament
+    def __init__(self, view, player_manager) -> None:
         self.view = view
+        self.player_manager = player_manager
+        self.tournament_list = []
+        self.tournament = ""
+
+    def create_tournament(self):
+        tournament_name = self.get_tournament_name()
+        tournament_location = self.get_tournament_location()
+        tournament_date = self.get_tournament_date()
+        time_control = self.get_time_control()
+        tournament_description = self.get_tournament_description()
+        self.tournament = Tournament(tournament_name, tournament_location,
+        tournament_date, time_control, tournament_description)
+        self.tournament_list.append(self.tournament)
+        self.view.tournament_added_successfully()
+        self.view.press_enter_to_continue()
+
+    def get_tournament(self):
+        if not self.tournament:
+            return ""
+        else:
+            return self.tournament.get_tournament_name()
+
+    def add_player_to_tournament(self, player):
+        self.tournament.add_player_in_list(player)
+
+    def get_tournament_name(self):
+        tournament_name = self.view.get_tournament_name()
+        return tournament_name
+
+    def get_tournament_location(self):
+        tournament_location = self.view.get_tournament_location()
+        return tournament_location
+
+    def get_tournament_date(self):
+        tournament_date = self.view.get_tournament_date()
+        return tournament_date
+
+    def get_time_control(self):
+        time_control = self.view.get_time_control()
+        return time_control
+
+    def get_tournament_description(self):
+        tournament_description = self.view.get_tournament_description()
+        return tournament_description
+
+    def add_existing_player_to_tournament(self):
+        if not self.player_manager.get_all_players():
+            self.view.display_no_existing_player()
+            self.view.press_enter_to_continue()
+        else:
+            list_of_all_players = self.player_manager.get_all_players()
+            self.view.display_existing_player_to_add(list_of_all_players)
+            
+            player_index = self.view.get_index_of_player()
+            for player in list_of_all_players:
+                if player.get_id() == int(player_index):
+                    if player not in list_of_all_players:
+                        self.tournament.add_player_in_list(player)
+                        print(self.tournament.list_of_players)
+                    else:
+                        self.view.player_already_in_tournament()
+                        self.view.press_enter_to_continue()
+
+    def change_selected_tournament(self):
+        self.view.print("Liste des tournois\n")
+        if not self.tournament_list:
+            self.view.print("           La liste est vide")
+            self.view.press_enter_to_continue()
+        else:
+            for tournament in self.tournament_list:
+                self.view.print(f"          - {tournament.name}")
+            tournament_to_select = self.view.get_tournament_to_select().strip()
+            found = 0
+            for tournament in self.tournament_list:
+                if tournament.name.lower() == tournament_to_select.lower():
+                    self.tournament = tournament
+                    self.view.print(f"\nTournoi {tournament_to_select} sélectionné")
+                    self.view.press_enter_to_continue()
+                    found = 1
+                    break
+            if not found:    
+                self.view.print(f"Tournoi {tournament_to_select} non trouvé")
+                self.view.press_enter_to_continue()
+
+    def display_all_tournament(self):
+        self.view.print("Liste des tournois\n")
+        if not self.tournament_list:
+            self.view.print("           La liste est vide")
+            self.view.press_enter_to_continue()
+        else:
+            for tournament in self.tournament_list:
+                self.view.print(f"          - {tournament.name}")
+            self.view.press_enter_to_continue()
+
+    def delete_tournament(self):
+        self.view.print("Liste des tournois\n")
+        if not self.tournament_list:
+            self.view.print("           La liste est vide")
+            self.view.press_enter_to_continue()
+        else:
+            for tournament in self.tournament_list:
+                self.view.print(f"          - {tournament.name}\n")
+            tournament_to_delete = self.view.get_tournament_to_delete().strip()
+            found = 0
+            for tournament in self.tournament_list:
+                if tournament.name.lower() == tournament_to_delete.lower():
+                    self.tournament_list.remove(tournament)
+                    self.view.print(f"\nTournoi {tournament_to_delete} supprimé")
+                    if self.tournament == tournament:
+                        self.tournament = ""
+                    self.view.press_enter_to_continue()
+                    found = 1
+                    break
+            if not found:
+                self.view.print(f"Tournoi {tournament_to_delete} non trouvé")
+                self.view.press_enter_to_continue()
+
+    def display_tournament_players(self):
+        if not self.tournament.get_list_of_player():
+            self.view.display_no_player_in_tournament()
+        else:
+            self.view.display_list_of_player(self.tournament.get_list_of_player())
+        self.view.press_enter_to_continue()
+
+    def remove_player_from_tournament(self):
+
+        if not self.tournament.get_list_of_player():
+            self.view.display_no_player_in_tournament()
+            self.view.press_enter_to_continue()
+        else:
+            self.view.which_player_to_delete(self.tournament.get_list_of_player())
+            player_to_delete = self.view.get_player_to_delete_from_tournament().strip()
+            for player in self.tournament.get_list_of_player():
+                if int(player_to_delete) == player.get_id():
+                    self.tournament.remove_player_in_list(player)
+                    self.view.player_removed_from_tournament(int(player_to_delete))
+                    self.view.press_enter_to_continue()
+                else:
+                    self.view.player_not_found(player_to_delete)
+                    self.view.press_enter_to_continue()
+        
 
     def handle_tournament(self):
-        # Get 8 players
-        self.get_players()
-
-        # Ask if we can start the tournament
-        self.get_ready()
-
         self.create_first_round()
 
         # Introduce the upcoming list of matchs
@@ -49,8 +183,10 @@ class TournamentManager:
         for player in self.tournament.get_list_of_player():
             print(player)
 
+        self.view.press_enter_to_continue()
+
     def get_players(self):
-        test_data = [
+        """test_data = [
             ["last_name_1", "first_name_1", "birthday_1", "sex_1", "100"],
             ["last_name_2", "first_name_2", "birthday_2", "sex_2", "200"],
             ["last_name_3", "first_name_3", "birthday_3", "sex_3", "300"],
@@ -59,10 +195,8 @@ class TournamentManager:
             ["last_name_6", "first_name_6", "birthday_6", "sex_6", "600"],
             ["last_name_7", "first_name_7", "birthday_7", "sex_7", "700"],
             ["last_name_8", "first_name_8", "birthday_8", "sex_8", "800"],
-        ]
+        ]"""
 
-        """
-        Production 
         for i in range(self.tournament.NUMBER_OF_PLAYER):
             last_name = self.get_player_last_name()
             first_name = self.get_player_first_name()
@@ -72,7 +206,7 @@ class TournamentManager:
             player = Player(last_name, first_name, birthday, sex, int(elo))
             
             self.tournament.add_player_in_list(player)
-        """
+        
         for player in test_data:
             last_name = player[0]
             first_name = player[1]

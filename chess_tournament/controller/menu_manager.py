@@ -9,7 +9,7 @@ class MenuManager:
     def __init__(self, state) -> None:
         self.transition_to(state)
         self.view = state.view
-        os.system("cls" if os.name == "nt" else "clear")
+        self.view.clean_console()
         self.view.show_banner()
 
     def transition_to(self, state):
@@ -41,26 +41,25 @@ class State(ABC):
 
 
 class Main_menu(State):
-    def __init__(self, view) -> None:
+    def __init__(self, view, tournament_manager, player_manager) -> None:
         self.view = view
+        self.tournament_manager = tournament_manager
+        self.player_manager = player_manager
 
     def print_menu(self) -> None:
-        self.view.print(
-            f"Que voulez-vous faire ?\n\n"
-            f"          1 : Créer un tournoi\n"
-            f"          2 : Gérer les joueurs\n"
-            f"          3 : Quitter l'application\n"
-        )
+        self.view.clean_console()
+        self.view.show_banner()
+        self.view.display_main_menu()
 
     def get_user_option(self) -> None:
         user_option = self.view.get_user_option()
         if user_option == "1":
-            self.menu_manager.transition_to(Tournament_menu(self.view))
+            self.menu_manager.transition_to(Tournament_menu(self.view, self.tournament_manager, self.player_manager))
         elif user_option == "2":
-            self.menu_manager.transition_to(Player_menu(self.view))
+            self.menu_manager.transition_to(Player_menu(self.view, self.player_manager, self.tournament_manager))
         elif user_option == "3":
             self.go_back()
-        os.system("cls" if os.name == "nt" else "clear")
+        self.view.clean_console()
         self.view.show_banner()
 
     def go_back(self) -> None:
@@ -68,56 +67,118 @@ class Main_menu(State):
 
 
 class Tournament_menu(State):
-    def __init__(self, view) -> None:
+    def __init__(self, view, tournament_manager, player_manager) -> None:
         self.view = view
+        self.tournament_manager = tournament_manager
+        self.player_manager = player_manager
 
     def print_menu(self) -> None:
-        os.system("cls" if os.name == "nt" else "clear")
+        self.view.clean_console()
         self.view.show_banner()
-        self.view.print(
-            f"Que voulez-vous faire ?\n\n"
-            f"          1 : Créer un tournoi\n"
-            f"          2 : Retour\n"
-        )
+        self.view.display_tournament_menu(self.tournament_manager.get_tournament())
 
     def get_user_option(self) -> None:
         user_option = self.view.get_user_option()
         if user_option == "1":
-            return "Create tournament"
-        elif user_option == "2":
-            self.menu_manager.transition_to(Main_menu(self.view))
-        os.system("cls" if os.name == "nt" else "clear")
+            self.view.clean_console()
+            self.view.show_banner()
+            self.tournament_manager.create_tournament()
+        if user_option == "2":
+            self.view.clean_console()
+            self.view.show_banner()
+            self.tournament_manager.display_all_tournament()
+        if user_option == "3":
+            self.view.clean_console()
+            self.view.show_banner()
+            if not self.tournament_manager.get_tournament():
+                self.view.display_no_tournament_selected()
+                self.view.press_enter_to_continue()
+            else:
+                self.menu_manager.transition_to(Add_player_to_tournament(self.view, self.tournament_manager, self.player_manager))
+        if user_option == "4":
+            self.view.clean_console()
+            self.view.show_banner()
+            self.tournament_manager.change_selected_tournament()
+        if user_option == "5":
+            self.view.clean_console()
+            self.view.show_banner()
+            self.tournament_manager.delete_tournament()
+        if user_option == "6":
+            self.view.clean_console()
+            self.view.show_banner()
+            self.tournament_manager.handle_tournament()
+        elif user_option == "7":
+            self.go_back()
+        self.view.clean_console()
         self.view.show_banner()
 
     def go_back(self) -> None:
-        self.menu_manager.transition_to(Main_menu(self.view))
+        self.menu_manager.transition_to(Main_menu(self.view, self.tournament_manager, self.player_manager))
 
 
 class Player_menu(State):
-    def __init__(self, view) -> None:
+    def __init__(self, view, player_manager, tournament_manager) -> None:
         self.view = view
+        self.player_manager = player_manager
+        self.tournament_manager = tournament_manager
 
     def print_menu(self) -> None:
-        os.system("cls" if os.name == "nt" else "clear")
+        self.view.clean_console()
         self.view.show_banner()
-        self.view.print(
-            f"Que voulez-vous faire ?\n\n"
-            f"          1 : Ajouter un joueur\n"
-            f"          2 : Voir la liste des joueurs\n"
-            f"          3 : Retour\n"
-        )
+        self.view.display_player_menu()
 
     def get_user_option(self) -> None:
         user_option = self.view.get_user_option()
         if user_option == "1":
-            return f"Add a player"
+            self.view.clean_console()
+            self.view.show_banner()
+            self.player_manager.create_player()
         if user_option == "2":
-            return f"See list of players"
+            self.view.clean_console()
+            self.view.show_banner()
+            self.player_manager.display_all_players()
         elif user_option == "3":
-            self.menu_manager.transition_to(Main_menu(self.view))
+            self.go_back()
         
 
     def go_back(self) -> None:
-        self.menu_manager.transition_to(Main_menu(self.view))
+        self.menu_manager.transition_to(Main_menu(self.view, self.tournament_manager, self.player_manager))
 
     
+class Add_player_to_tournament(State):
+    def __init__(self, view, tournament_manager, player_manager) -> None:
+        self.view = view
+        self.player_manager = player_manager
+        self.tournament_manager = tournament_manager
+
+    def print_menu(self) -> None:
+        self.view.clean_console()
+        self.view.show_banner()
+        self.view.display_add_player_to_tournament(self.tournament_manager.get_tournament())
+
+    def get_user_option(self) -> None:
+        user_option = self.view.get_user_option()
+        if user_option == "1":
+            self.view.clean_console()
+            self.view.show_banner()
+            player = self.player_manager.create_player()
+            self.tournament_manager.add_player_to_tournament(player)
+            print("worked ?")
+        elif user_option == "2":
+            self.view.clean_console()
+            self.view.show_banner()
+            self.tournament_manager.add_existing_player_to_tournament()
+        elif user_option == "3":
+            self.view.clean_console()
+            self.view.show_banner()
+            self.tournament_manager.display_tournament_players()
+        elif user_option == "4":
+            self.view.clean_console()
+            self.view.show_banner()
+            self.tournament_manager.remove_player_from_tournament()
+        elif user_option == "5":
+            self.go_back()
+        
+
+    def go_back(self) -> None:
+        self.menu_manager.transition_to(Tournament_menu(self.view, self.tournament_manager, self.player_manager))

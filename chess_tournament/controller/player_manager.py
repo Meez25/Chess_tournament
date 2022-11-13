@@ -3,16 +3,12 @@ import os
 
 
 class PlayerManager:
-    def __init__(self, player_database, view) -> None:
-        self.player_database = player_database
+    def __init__(self, view) -> None:
         self.view = view
         self._list_of_player = []
 
     
     def create_player(self):
-        os.system("cls" if os.name == "nt" else "clear")
-        self.view.show_banner()
-
         last_name = self.get_player_last_name()
         first_name = self.get_player_first_name()
         birthday = self.get_player_birthday()
@@ -20,14 +16,22 @@ class PlayerManager:
         elo = self.get_player_elo()
         player = Player(last_name, first_name, birthday, sex, int(elo))
         self._list_of_player.append(player)
+        self.view.print("\nJoueur ajouté avec succès !")
+        self.view.press_enter_to_continue()
+        self.view.clean_console()
+        self.view.show_banner()
+        return player
+
+    def get_all_players(self):
+        return self._list_of_player
 
     
     def display_all_players(self):
-        os.system("cls" if os.name == "nt" else "clear")
+        self.view.display_list_of_player(self._list_of_player)
+        self.view.press_enter_to_continue()
+        self.view.clean_console()
         self.view.show_banner()
-
-        for player in self._list_of_player:
-            print(player)
+        
 
     def get_player_last_name(self):
         valid_input = 0
