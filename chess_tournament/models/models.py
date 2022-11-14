@@ -1,4 +1,5 @@
-import itertools
+from itertools import count
+from dataclasses import dataclass, field
 
 
 class Match:
@@ -43,17 +44,14 @@ class Match:
         return f"{self.player1.last_name} contre {self.player2.last_name}"
 
 
+@dataclass
 class Player:
-    newid = itertools.count()
-
-    def __init__(self, last_name, first_name, date_of_birth, sex, elo) -> None:
-        self.last_name = last_name
-        self.first_name = first_name
-        self.date_of_birth = date_of_birth
-        self.sex = sex
-        self.elo = elo
-        self.already_played = []
-        self.id = next(Player.newid)
+    last_name: str
+    first_name: str
+    date_of_birth: str
+    sex: str
+    elo: int
+    id: int = field(default_factory=count().__next__, init=False)
 
     def __str__(self) -> str:
         return (
@@ -79,12 +77,6 @@ class Player:
 
     def __repr__(self):
         return self.last_name
-
-    def add_already_played(self, player):
-        self.already_played.append(player)
-
-    def get_already_played(self):
-        return self.already_played
 
     def get_last_name(self):
         return self.last_name
