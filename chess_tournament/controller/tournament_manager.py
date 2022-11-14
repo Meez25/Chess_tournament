@@ -385,7 +385,7 @@ class TournamentManager:
         previous_round = []
         for player in self.tournament.get_list_of_player():
             player_point = 0
-            for round in self.tournament.get_list_of_rounds():
+            for round in self.tournament.get_list_of_rounds()[:-1]:
                 for match in round.get_list_of_match():
                     match_result = match.get_result()
                     if player == match_result[0][0]:
