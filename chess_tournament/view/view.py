@@ -235,10 +235,7 @@ class View:
         )
 
     def display_no_tournament_selected(self):
-        print(
-            f"Aucun tournoi n'est sélectionné\n"
-            f"Veuillez sélectionner un tournoi afin d'y ajouter les joueurs"
-        )
+        print(f"Aucun tournoi n'est sélectionné\n" f"Veuillez sélectionner un tournoi.")
 
     def display_no_player_in_tournament(self):
         """There is no player in the tournament"""
@@ -306,7 +303,6 @@ class View:
         print("Liste des tournois\n")
         if not list_of_tournament:
             print("           La liste est vide")
-            self.press_enter_to_continue()
         else:
             for tournament in list_of_tournament:
                 print(f"          - {tournament.name}")

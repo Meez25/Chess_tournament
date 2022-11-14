@@ -175,42 +175,51 @@ class TournamentManager:
 
     def handle_tournament(self):
         """Start the tournament"""
-        if not len(self.tournament.list_of_players) == self.tournament.NUMBER_OF_PLAYER:
-            self.view.display_need_x_number_of_player(self.tournament.NUMBER_OF_PLAYER)
+        if not self.tournament:
+            self.view.display_no_tournament_selected()
             self.view.press_enter_to_continue()
         else:
+            if (
+                not len(self.tournament.list_of_players)
+                == self.tournament.NUMBER_OF_PLAYER
+            ):
+                self.view.display_need_x_number_of_player(
+                    self.tournament.NUMBER_OF_PLAYER
+                )
+                self.view.press_enter_to_continue()
+            else:
 
-            self.create_first_round()
+                self.create_first_round()
 
-            # Introduce the upcoming list of matchs
-            self.display_list_match()
+                # Introduce the upcoming list of matchs
+                self.display_list_match()
 
-            # Display the matchs to play
-            self.show_nth_round(0)
+                # Display the matchs to play
+                self.show_nth_round(0)
 
-            # Ask for results
-            self.get_match_results(0)
+                # Ask for results
+                self.get_match_results(0)
 
-            self.create_nth_round(1)
-            self.display_list_match()
-            self.show_nth_round(1)
-            self.get_match_results(1)
+                self.create_nth_round(1)
+                self.display_list_match()
+                self.show_nth_round(1)
+                self.get_match_results(1)
 
-            self.create_nth_round(2)
-            self.display_list_match()
-            self.show_nth_round(2)
-            self.get_match_results(2)
+                self.create_nth_round(2)
+                self.display_list_match()
+                self.show_nth_round(2)
+                self.get_match_results(2)
 
-            self.create_nth_round(3)
-            self.display_list_match()
-            self.show_nth_round(3)
-            self.get_match_results(3)
+                self.create_nth_round(3)
+                self.display_list_match()
+                self.show_nth_round(3)
+                self.get_match_results(3)
 
-            ranking = self.sort_player()
-            for player in ranking:
-                print(player[0])
+                ranking = self.sort_player()
+                for player in ranking:
+                    print(player[0])
 
-            self.view.press_enter_to_continue()
+                self.view.press_enter_to_continue()
 
     def get_player_last_name(self):
         """Get the player last name"""
