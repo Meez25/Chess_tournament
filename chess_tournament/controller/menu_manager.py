@@ -70,6 +70,10 @@ class Main_menu(State):
                 Player_menu(self.view, self.player_manager, self.tournament_manager)
             )
         elif user_option == "3":
+            self.menu_manager.transition_to(
+                Rapport_menu(self.view, self.player_manager, self.tournament_manager)
+            )
+        elif user_option == "4":
             self.go_back()
         self.view.clean_console()
         self.view.show_banner()
@@ -222,4 +226,26 @@ class Add_player_to_tournament(State):
         """Go back to previous menu"""
         self.menu_manager.transition_to(
             Tournament_menu(self.view, self.tournament_manager, self.player_manager)
+        )
+
+
+class Rapport_menu(State):
+    """Menu for the player"""
+
+    def __init__(self, view, player_manager, tournament_manager) -> None:
+        self.view = view
+        self.player_manager = player_manager
+        self.tournament_manager = tournament_manager
+
+    def print_menu(self) -> None:
+        """Display the player menu by calling the view"""
+        self.go_back()
+
+    def get_user_option(self) -> None:
+        ...
+
+    def go_back(self) -> None:
+        """Go back to previous menu"""
+        self.menu_manager.transition_to(
+            Main_menu(self.view, self.tournament_manager, self.player_manager)
         )

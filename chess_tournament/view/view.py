@@ -74,7 +74,7 @@ class View:
 
     def announce_matches(self):
         """Introduces match to play"""
-        print("Voici la liste des matchs à jouer : ")
+        print("Voici la liste des matchs à jouer : \n")
 
     def display_nth_round_games(self, player1, player2):
         """Introduce matches generated"""
@@ -207,7 +207,8 @@ class View:
             f"Que voulez-vous faire ?\n\n"
             f"          1 : Gestion des tournois\n"
             f"          2 : Gérer les joueurs\n"
-            f"          3 : Quitter l'application\n"
+            f"          3 : Rapports\n"
+            f"          4 : Quitter l'application\n"
         )
 
     def display_player_menu(self):
@@ -330,6 +331,13 @@ class View:
     def enough_number_of_player(self, number):
         """display there is enough player in the tournament"""
         print(f"Il y a déjà {number} joueurs dans le tournoi.")
+
+    def ask_exit_or_continue(self):
+        self.clean_console()
+        self.show_banner()
+        print(f"Voulez-vous démarrer le round suivant ou sauvegarder et quitter ?")
+        print(f"Entrée pour continuer, 'Q' pour sauvegarder et quitter\n")
+        return input("Entrez votre choix : ")
 
 
 class bcolors:

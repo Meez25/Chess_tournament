@@ -1,5 +1,6 @@
 from itertools import count
 from dataclasses import dataclass, field
+from enum import Enum
 
 
 class Match:
@@ -144,6 +145,15 @@ class Tournament:
     def get_tournament_name(self):
         return self.name
 
+    def get_number_of_player(self):
+        return self.NUMBER_OF_PLAYER
+
+    def set_progression(self, progression):
+        self.progression = progression
+
+    def get_progression(self):
+        return self.progression
+
     def __str__(self) -> str:
         return (
             f"Nom du tournoi : {self.name}\n"
@@ -152,3 +162,10 @@ class Tournament:
             f"Contrôle du temps : {self.time_control}\n"
             f"Description : {self.description}"
         )
+
+
+class Progress(Enum):
+    FIRST_ROUND = 0
+    SECOND_ROUND = 1
+    THIRD_ROUND = 2
+    FOURTH_ROUND = 3

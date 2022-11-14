@@ -1,4 +1,4 @@
-from models.models import Player, Match, Round, Tournament
+from models.models import Player, Match, Round, Tournament, Progress
 from datetime import datetime
 
 
@@ -43,10 +43,13 @@ class TournamentManager:
 
     def add_player_to_tournament(self, player):
         """Add a player to the current tournament"""
-        if len(self.tournament.list_of_players) < self.tournament.NUMBER_OF_PLAYER:
+        if (
+            len(self.tournament.list_of_players)
+            < self.tournament.get_number_of_player()
+        ):
             self.tournament.add_player_in_list(player)
         else:
-            self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
+            self.view.enough_number_of_player(self.tournament.get_number_of_player())
             self.view.press_enter_to_continue()
 
     def get_tournament_name(self):
@@ -173,7 +176,36 @@ class TournamentManager:
                     self.view.player_not_found(player_to_delete)
                     self.view.press_enter_to_continue()
 
+    def ask_exit_or_continue(self):
+        start_next_round = self.view.ask_exit_or_continue()
+        if not start_next_round:
+            wants_to_continue = True
+        else:
+            wants_to_continue = False
+        return wants_to_continue
+
+    def do_first_round(self):
+        self.tournament.set_progression(Progress.FIRST_ROUND)
+        self.create_first_round()
+
+        # Display the matchs to play
+        self.show_nth_round(0)
+
+        # Ask for results
+        self.get_match_results(0)
+
+    def do_a_round(self, n_round):
+
+        self.tournament.set_progression(Progress(n_round))
+        # Create the upcoming matches
+        self.create_nth_round(n_round)
+        # Display the list of generated matches
+        self.show_nth_round(n_round)
+        # Ask for the results
+        self.get_match_results(n_round)
+
     def handle_tournament(self):
+
         """Start the tournament"""
         if not self.tournament:
             self.view.display_no_tournament_selected()
@@ -181,45 +213,30 @@ class TournamentManager:
         else:
             if (
                 not len(self.tournament.list_of_players)
-                == self.tournament.NUMBER_OF_PLAYER
+                == self.tournament.get_number_of_player()
             ):
                 self.view.display_need_x_number_of_player(
-                    self.tournament.NUMBER_OF_PLAYER
+                    self.tournament.get_number_of_player()
                 )
                 self.view.press_enter_to_continue()
             else:
 
-                self.create_first_round()
+                self.do_first_round()
 
-                # Introduce the upcoming list of matchs
-                self.display_list_match()
+                for i in range(1, 4):
+                    wants_to_continue = self.ask_exit_or_continue()
+                    if wants_to_continue:
+                        self.do_a_round(i)
+                    else:
+                        break
+                    #
+                    if self.tournament.get_progression() == Progress.FOURTH_ROUND:
+                        # End of tournament
+                        ranking = self.sort_player()
+                        for player in ranking:
+                            print(player[0])
 
-                # Display the matchs to play
-                self.show_nth_round(0)
-
-                # Ask for results
-                self.get_match_results(0)
-
-                self.create_nth_round(1)
-                self.display_list_match()
-                self.show_nth_round(1)
-                self.get_match_results(1)
-
-                self.create_nth_round(2)
-                self.display_list_match()
-                self.show_nth_round(2)
-                self.get_match_results(2)
-
-                self.create_nth_round(3)
-                self.display_list_match()
-                self.show_nth_round(3)
-                self.get_match_results(3)
-
-                ranking = self.sort_player()
-                for player in ranking:
-                    print(player[0])
-
-                self.view.press_enter_to_continue()
+                        self.view.press_enter_to_continue()
 
     def get_player_last_name(self):
         """Get the player last name"""
@@ -290,28 +307,28 @@ class TournamentManager:
         self.tournament.get_list_of_player().sort(key=lambda x: x.elo)
 
         # Split the list in 2 groups
-        high_elo = self.tournament.get_list_of_player()[0:4]
-        low_elo = self.tournament.get_list_of_player()[4:8]
+        middle_index = int(len(self.tournament.get_list_of_player()) / 2)
+        high_elo = self.tournament.get_list_of_player()[:middle_index]
+        low_elo = self.tournament.get_list_of_player()[middle_index:]
 
         # Create 4 matches for the first round
-        for i in range(int(self.tournament.NUMBER_OF_PLAYER / 2)):
+        for i in range(int(self.tournament.get_number_of_player() / 2)):
             first_round.add_game(Match(high_elo[i], low_elo[i]))
 
     def show_nth_round(self, n):
         """Show the nth round"""
+        self.view.clean_console()
+        self.view.show_banner()
+        self.view.announce_matches()
         n_round = self.tournament.get_list_of_rounds()[n]
         game_list = n_round.get_list_of_match()
         for game in game_list:
             player1, player2 = game.show_players()
             self.view.display_nth_round_games(player1, player2)
 
-    def display_list_match(self):
-        """Introduce the list of matches"""
-        self.view.announce_matches()
-
     def get_match_results(self, n):
         """Ask 8 times for the results of matches"""
-        for i in range(int(self.tournament.NUMBER_OF_PLAYER / 2)):
+        for i in range(int(self.tournament.get_number_of_player() / 2)):
             self.enter_match_results(n, i)
 
     def enter_match_results(self, nth_round, nth_match):
@@ -396,7 +413,7 @@ class TournamentManager:
         sorted_list = self.sort_player()
 
         # Create 4 matches for the nth round
-        for i in range(int(self.tournament.NUMBER_OF_PLAYER / 2)):
+        for i in range(int(self.tournament.get_number_of_player() / 2)):
             found = False
             j = 1
             if not sorted_list:
