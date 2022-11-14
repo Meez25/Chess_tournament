@@ -2,16 +2,18 @@ import os
 
 
 class View:
+    """Handle the view role"""
+
     def show_banner(self):
         """Display the banner in the console"""
         print(
-            f"{bcolors.OKBLUE}"
+            f"{Bcolors.OKBLUE}"
             f"  _____                            _       _ _   __      _               \n"
             f" |_   _|__  _   _ _ __ _ __   ___ (_)   __| ( ) /_/  ___| |__   ___  ___ \n"
             f"   | |/ _ \| | | | '__| '_ \ / _ \| |  / _` |/ / _ \/ __| '_ \ / _ \/ __|\n"
             f"   | | (_) | |_| | |  | | | | (_) | | | (_| | |  __/ (__| | | |  __/ (__ \n"
             f"   |_|\___/ \__,_|_|  |_| |_|\___/|_|  \__,_|  \___|\___|_| |_|\___|\___|\n"
-            f"{bcolors.ENDC}"
+            f"{Bcolors.ENDC}"
         )
 
     def ask_player_last_name(self):
@@ -93,7 +95,7 @@ class View:
 
     def display_score_error(self):
         """Match result input error"""
-        print(f"Le score ne peut être que 0, 0,5 ou 1.")
+        print("Le score ne peut être que 0, 0,5 ou 1.")
 
     def tournament_added_successfully(self):
         """Match added successfully"""
@@ -187,64 +189,67 @@ class View:
 
     def display_tournament_menu(self, current_tournament):
         if not current_tournament:
-            print(f"Aucun tournoi n'est sélectionné\n")
+            print("Aucun tournoi n'est sélectionné\n")
         else:
             print(f'Le tournoi "{current_tournament}" est sélectionné.\n')
 
         print(
-            f"Que voulez-vous faire ?\n\n"
-            f"          1 : Créer un nouveau tournoi\n"
-            f"          2 : Voir la liste des tournois\n"
-            f"          3 : Gérer les joueurs du tournoi sélectionné\n"
-            f"          4 : Sélectionner un autre tournoi\n"
-            f"          5 : Supprimer un tournoi\n"
-            f"          6 : Démarrer le tournoi !\n"
-            f"          7 : Retour\n"
+            "Que voulez-vous faire ?\n\n"
+            "          1 : Créer un nouveau tournoi\n"
+            "          2 : Voir la liste des tournois\n"
+            "          3 : Gérer les joueurs du tournoi sélectionné\n"
+            "          4 : Sélectionner un autre tournoi\n"
+            "          5 : Supprimer un tournoi\n"
+            "          6 : Démarrer le tournoi !\n"
+            "          7 : Retour\n"
         )
 
     def display_main_menu(self):
         print(
-            f"Que voulez-vous faire ?\n\n"
-            f"          1 : Gestion des tournois\n"
-            f"          2 : Gérer les joueurs\n"
-            f"          3 : Rapports\n"
-            f"          4 : Quitter l'application\n"
+            "Que voulez-vous faire ?\n\n"
+            "          1 : Gestion des tournois\n"
+            "          2 : Gérer les joueurs\n"
+            "          3 : Rapports\n"
+            "          4 : Quitter l'application\n"
         )
 
     def display_player_menu(self):
+        """Display the player menu"""
         print(
-            f"Que voulez-vous faire ?\n\n"
-            f"          1 : Ajouter un joueur\n"
-            f"          2 : Modifier un joueur\n"
-            f"          3 : Voir la liste des joueurs\n"
-            f"          4 : Retour\n"
+            "Que voulez-vous faire ?\n\n"
+            "          1 : Ajouter un joueur\n"
+            "          2 : Modifier un joueur\n"
+            "          3 : Voir la liste des joueurs\n"
+            "          4 : Retour\n"
         )
 
     def display_add_player_to_tournament(self, current_tournament):
+        """Display the menu to add a player in the tournament"""
         if not current_tournament:
-            print(f"Aucun tournoi n'est sélectionné\n")
+            print("Aucun tournoi n'est sélectionné\n")
         else:
             print(f'Le tournoi "{current_tournament}" est sélectionné.\n')
 
         print(
-            f"Que voulez-vous faire ?\n\n"
-            f"          1 : Ajouter un nouveau joueur\n"
-            f"          2 : Ajouter un joueur existant\n"
-            f"          3 : Afficher la liste des joueurs ajoutés au tournoi\n"
-            f"          4 : Supprimer un joueur du tournoi\n"
-            f"          5 : Retour\n"
+            "Que voulez-vous faire ?\n\n"
+            "          1 : Ajouter un nouveau joueur\n"
+            "          2 : Ajouter un joueur existant\n"
+            "          3 : Afficher la liste des joueurs ajoutés au tournoi\n"
+            "          4 : Supprimer un joueur du tournoi\n"
+            "          5 : Retour\n"
         )
 
     def display_no_tournament_selected(self):
-        print(f"Aucun tournoi n'est sélectionné\n" f"Veuillez sélectionner un tournoi.")
+        """Display no tournament error"""
+        print("Aucun tournoi n'est sélectionné\nVeuillez sélectionner un tournoi.")
 
     def display_no_player_in_tournament(self):
         """There is no player in the tournament"""
-        print(f"Aucun joueur n'est ajouté au tournoi\n" f"Veuillez ajouter des joueurs")
+        print("Aucun joueur n'est ajouté au tournoi\nVeuillez ajouter des joueurs")
 
     def display_no_player_in_database(self):
         """There is no player in the database"""
-        print(f"Aucun joueur n'est ajouté.\n" f"Veuillez ajouter des joueurs")
+        print("Aucun joueur n'est ajouté.\nVeuillez ajouter des joueurs")
 
     def which_player_to_delete(self, list_of_player):
         """Ask which player to delete"""
@@ -333,24 +338,29 @@ class View:
         print(f"Il y a déjà {number} joueurs dans le tournoi.")
 
     def ask_exit_or_continue(self):
+        """Ask if the user wants to continue"""
         self.clean_console()
         self.show_banner()
-        print(f"Voulez-vous démarrer le round suivant ou sauvegarder et quitter ?")
-        print(f"Entrée pour continuer, 'Q' pour sauvegarder et quitter\n")
+        print("Voulez-vous démarrer le round suivant ou sauvegarder et quitter ?")
+        print("Entrée pour continuer, 'Q' pour sauvegarder et quitter\n")
         return input("Entrez votre choix : ")
 
     def display_ranking_end_of_tournament(self, ranking):
+        """Display the final ranking and end the tournament"""
         self.clean_console()
         self.show_banner()
-        print(f"Voici le classement final de ce tournoi : \n")
+        print("Voici le classement final de ce tournoi : \n")
         for player in ranking:
             print(f"{player[0]} avec {player[1]} points !")
 
     def tournament_is_over(self):
+        """The tournament is over !"""
         print("Le tournoi est déjà terminé !")
 
 
-class bcolors:
+class Bcolors:
+    """class helper for color"""
+
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"
     OKCYAN = "\033[96m"

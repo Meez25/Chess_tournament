@@ -1,6 +1,6 @@
-from itertools import count
 from dataclasses import dataclass, field
 from enum import Enum
+from itertools import count
 
 
 class Match:
@@ -10,15 +10,13 @@ class Match:
         self.player1 = player1
         self.player2 = player2
         self.result = {}
+        self.end_date = None
 
     def set_score_player_1(self, new_score):
         self.score1 = new_score
 
     def set_score_player_2(self, new_score):
         self.score2 = new_score
-
-    def get_result(self):
-        return {[self.player1, self.score1], [self.player2, self.score2]}
 
     def show_players(self) -> str:
         return [self.player1, self.player2]
@@ -36,6 +34,7 @@ class Match:
         self.result = tuple(self.result)
 
     def get_result(self):
+        """Get the result of the game"""
         return self.result
 
     def __str__(self):
@@ -103,6 +102,7 @@ class Round:
         self.start_date = start_date
         self.name = name
         self.list_of_match = []
+        self.end_date = None
 
     def add_game(self, game):
         self.list_of_match.append(game)
@@ -128,8 +128,8 @@ class Tournament:
         self.NUMBER_OF_ROUNDS = 4
         self.NUMBER_OF_PLAYER = 8
 
-    def add_round(self, round):
-        self.list_of_rounds.append(round)
+    def add_round(self, nround):
+        self.list_of_rounds.append(nround)
 
     def get_list_of_rounds(self):
         return self.list_of_rounds

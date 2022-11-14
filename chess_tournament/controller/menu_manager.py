@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import sys
-import os
 
 
 class MenuManager:
@@ -44,7 +43,7 @@ class State(ABC):
         pass
 
 
-class Main_menu(State):
+class MainMenu(State):
     """First menu to appear at start of the app"""
 
     def __init__(self, view, tournament_manager, player_manager) -> None:
@@ -116,7 +115,7 @@ class Tournament_menu(State):
                 self.view.press_enter_to_continue()
             else:
                 self.menu_manager.transition_to(
-                    Add_player_to_tournament(
+                    AddPlayerToTournament(
                         self.view, self.tournament_manager, self.player_manager
                     )
                 )
@@ -140,7 +139,7 @@ class Tournament_menu(State):
     def go_back(self) -> None:
         """Go back previous menu"""
         self.menu_manager.transition_to(
-            Main_menu(self.view, self.tournament_manager, self.player_manager)
+            MainMenu(self.view, self.tournament_manager, self.player_manager)
         )
 
 
@@ -179,11 +178,11 @@ class Player_menu(State):
     def go_back(self) -> None:
         """Go back to previous menu"""
         self.menu_manager.transition_to(
-            Main_menu(self.view, self.tournament_manager, self.player_manager)
+            MainMenu(self.view, self.tournament_manager, self.player_manager)
         )
 
 
-class Add_player_to_tournament(State):
+class AddPlayerToTournament(State):
     """Add player menu"""
 
     def __init__(self, view, tournament_manager, player_manager) -> None:
@@ -247,5 +246,5 @@ class Rapport_menu(State):
     def go_back(self) -> None:
         """Go back to previous menu"""
         self.menu_manager.transition_to(
-            Main_menu(self.view, self.tournament_manager, self.player_manager)
+            MainMenu(self.view, self.tournament_manager, self.player_manager)
         )

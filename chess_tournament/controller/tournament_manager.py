@@ -1,4 +1,4 @@
-from models.models import Player, Match, Round, Tournament, Progress
+from models.models import Match, Round, Tournament, Progress
 from datetime import datetime
 
 
@@ -418,7 +418,7 @@ class TournamentManager:
         sorted_list = self.sort_player()
 
         # Create 4 matches for the nth round
-        for i in range(int(self.tournament.get_number_of_player() / 2)):
+        for _ in range(int(self.tournament.get_number_of_player() / 2)):
             found = False
             j = 1
             if not sorted_list:

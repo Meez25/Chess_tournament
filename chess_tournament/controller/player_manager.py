@@ -158,6 +158,6 @@ class PlayerManager:
 
                     else:
                         pass
-            if found == False:
+            if not found:
                 self.view.player_not_found(player_to_modify)
                 self.view.press_enter_to_continue()
