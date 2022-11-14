@@ -191,29 +191,24 @@ class TournamentManager:
             # Ask for results
             self.get_match_results(0)
 
-            self.give_points_to_players_from_match(0)
-
             self.create_nth_round(1)
             self.display_list_match()
             self.show_nth_round(1)
             self.get_match_results(1)
-            self.give_points_to_players_from_match(1)
 
             self.create_nth_round(2)
             self.display_list_match()
             self.show_nth_round(2)
             self.get_match_results(2)
-            self.give_points_to_players_from_match(2)
 
             self.create_nth_round(3)
             self.display_list_match()
             self.show_nth_round(3)
             self.get_match_results(3)
-            self.give_points_to_players_from_match(3)
 
-            self.sort_player()
-            for player in self.tournament.get_list_of_player():
-                print(player)
+            ranking = self.sort_player()
+            for player in ranking:
+                print(player[0])
 
             self.view.press_enter_to_continue()
 
@@ -355,53 +350,59 @@ class TournamentManager:
                     else:
                         self.view.display_score_error()
 
-    def give_points_to_players_from_match(self, nth_round):
-        list_of_match = self.tournament.get_list_of_rounds()[
-            nth_round
-        ].get_list_of_match()
-        for match in list_of_match:
-            match.add_score_to_players()
-
     def add_already_played(self, players):
         player1 = players[0]
         player2 = players[1]
         player1.add_already_played(player2)
         player2.add_already_played(player1)
 
-    def sort_player(self, nround):
-        """Get the result of the previous round"""
+    def sort_player(self):
+        """Get the result of the previous rounds per player and make a list"""
         previous_round = []
+        for player in self.tournament.get_list_of_player():
+            player_point = 0
+            for round in self.tournament.get_list_of_rounds():
+                for match in round.get_list_of_match():
+                    match_result = match.get_result()
+                    if player == match_result[0][0]:
+                        player_point = player_point + match_result[0][1]
+                    elif player == match_result[1][0]:
+                        player_point = player_point + match_result[1][1]
+            previous_round.append([player, player_point])
+        previous_round.sort(key=lambda x: (x[1], x[0].get_elo()), reverse=True)
+        return previous_round
+
+        """
         for match in self.tournament.get_list_of_rounds()[
             nround - 1
         ].get_list_of_match():
-            previous_round.append(match.get_result())
-        self.tournament.get_list_of_player().sort(
-            key=lambda x: (x.score, x.elo), reverse=True
-        )
+            previous_round.append(match.get_result()[0])
+            previous_round.append(match.get_result()[1])
+        previous_round.sort(key=lambda x: (x[1], x[0].get_elo()), reverse=True)
+        
+        """
 
     def create_nth_round(self, nround):
         # Create first round
+        print(f"ici + {nround}")
         round = Round(f"Round {nround+1}", datetime.now())
         self.tournament.add_round(round)
 
         # Sort player by Elo
-        self.sort_player(nround)
-        list_of_player = self.tournament.get_list_of_player()
-        copy_of_list_of_player = list_of_player.copy()
+        sorted_list = self.sort_player()
 
         # Create 4 matches for the nth round
         for i in range(int(self.tournament.NUMBER_OF_PLAYER / 2)):
             found = False
             j = 1
-            if not copy_of_list_of_player:
+            if not sorted_list:
                 found = True
             while not found:
-
-                player = copy_of_list_of_player[0]
-                if copy_of_list_of_player[j] not in player.get_already_played():
+                player = sorted_list[0][0]
+                if sorted_list[j][0] not in player.get_already_played():
                     found = True
-                    round.add_game(Match(player, copy_of_list_of_player[j]))
-                    del copy_of_list_of_player[0]
-                    del copy_of_list_of_player[j - 1]
+                    round.add_game(Match(player, sorted_list[j][0]))
+                    del sorted_list[0]
+                    del sorted_list[j - 1]
                 else:
                     j = j + 1

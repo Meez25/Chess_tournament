@@ -52,7 +52,6 @@ class Player:
         self.date_of_birth = date_of_birth
         self.sex = sex
         self.elo = elo
-        self.score = 0
         self.already_played = []
         self.id = next(Player.newid)
 
@@ -80,12 +79,6 @@ class Player:
 
     def __repr__(self):
         return self.last_name
-
-    def set_score(self, score):
-        self.score = score
-
-    def get_score(self):
-        return self.score
 
     def add_already_played(self, player):
         self.already_played.append(player)
