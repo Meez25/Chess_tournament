@@ -124,8 +124,10 @@ class PlayerManager:
             player_to_modify = self.view.get_player_to_modify().strip()
             self.view.clean_console()
             self.view.show_banner()
+            found = False
             for player in self.get_all_players():
                 if int(player_to_modify) == player.get_id():
+                    found = True
                     attribute_to_change = self.view.get_modify_element(player)
                     if attribute_to_change == "1":
                         player.set_last_name(self.view.get_new_last_name())
@@ -156,6 +158,6 @@ class PlayerManager:
 
                     else:
                         pass
-                else:
-                    self.view.player_not_found(player_to_modify)
-                    self.view.press_enter_to_continue()
+            if found == False:
+                self.view.player_not_found(player_to_modify)
+                self.view.press_enter_to_continue()
