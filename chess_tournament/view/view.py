@@ -339,6 +339,16 @@ class View:
         print(f"Entrée pour continuer, 'Q' pour sauvegarder et quitter\n")
         return input("Entrez votre choix : ")
 
+    def display_ranking_end_of_tournament(self, ranking):
+        self.clean_console()
+        self.show_banner()
+        print(f"Voici le classement final de ce tournoi : \n")
+        for player in ranking:
+            print(f"{player[0]} avec {player[1]} points !")
+
+    def tournament_is_over(self):
+        print("Le tournoi est déjà terminé !")
+
 
 class bcolors:
     HEADER = "\033[95m"

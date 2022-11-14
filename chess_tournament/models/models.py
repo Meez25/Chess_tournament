@@ -123,6 +123,7 @@ class Tournament:
         self.description = description
         self.list_of_players = []
         self.list_of_rounds = []
+        self.progression = Progress.FIRST_ROUND
 
         self.NUMBER_OF_ROUNDS = 4
         self.NUMBER_OF_PLAYER = 8

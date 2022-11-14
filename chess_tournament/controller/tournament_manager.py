@@ -193,6 +193,7 @@ class TournamentManager:
 
         # Ask for results
         self.get_match_results(0)
+        self.tournament.set_progression(Progress.SECOND_ROUND)
 
     def do_a_round(self, n_round):
 
@@ -219,23 +220,27 @@ class TournamentManager:
                     self.tournament.get_number_of_player()
                 )
                 self.view.press_enter_to_continue()
+            elif self.tournament.get_progression().name == "FOURTH_ROUND":
+                self.view.tournament_is_over()
+                self.view.press_enter_to_continue()
             else:
-
-                self.do_first_round()
-
-                for i in range(1, 4):
+                wants_to_continue = True
+                if self.tournament.get_progression().value == 0:
+                    self.do_first_round()
                     wants_to_continue = self.ask_exit_or_continue()
+
+                for i in range(self.tournament.get_progression().value, 4):
                     if wants_to_continue:
                         self.do_a_round(i)
+                        if self.tournament.get_progression().value < 3:
+                            wants_to_continue = self.ask_exit_or_continue()
                     else:
                         break
                     #
                     if self.tournament.get_progression() == Progress.FOURTH_ROUND:
                         # End of tournament
                         ranking = self.sort_player()
-                        for player in ranking:
-                            print(player[0])
-
+                        self.view.display_ranking_end_of_tournament(ranking)
                         self.view.press_enter_to_continue()
 
     def get_player_last_name(self):
