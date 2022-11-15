@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from models.models import Progress, Tournament
+from models.models import Progress, Tournament  # type:ignore
 import sys
 from tinydb import TinyDB
 import json

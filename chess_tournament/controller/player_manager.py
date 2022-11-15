@@ -1,4 +1,4 @@
-from models.models import Player
+from models.models import Player  # type:ignore
 
 
 class PlayerManager:
@@ -24,8 +24,8 @@ class PlayerManager:
             birthday = player[2]
             sex = player[3]
             elo = int(player[4])
-            player = Player(last_name, first_name, birthday, sex, elo)
-            self._list_of_player.append(player)
+            player_object: Player = Player(last_name, first_name, birthday, sex, elo)
+            self._list_of_player.append(player_object)
 
     def create_player(self):
         """Create a player"""

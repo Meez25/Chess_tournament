@@ -1,8 +1,8 @@
-from controller.menu_manager import MenuManager
-from controller.menu_manager import MainMenu
-from controller.tournament_manager import TournamentManager
-from controller.player_manager import PlayerManager
-from view.view import View
+from controller.menu_manager import MenuManager  # type:ignore
+from controller.menu_manager import MainMenu  # type:ignore
+from controller.tournament_manager import TournamentManager  # type:ignore
+from controller.player_manager import PlayerManager  # type:ignore
+from view.view import View  # type:ignore
 
 
 class Controller:

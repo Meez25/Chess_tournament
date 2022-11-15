@@ -1,4 +1,4 @@
-from models.models import Match, Round, Tournament, Progress
+from models.models import Match, Round, Tournament, Progress  # type:ignore
 from datetime import datetime
 
 

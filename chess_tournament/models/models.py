@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from itertools import count
+from typing import List
 
 
 class Match:
@@ -9,7 +10,7 @@ class Match:
         self.score2 = 0
         self.player1 = player1
         self.player2 = player2
-        self.result = {}
+        self.result: dict[None, None] = {}
         self.end_date = None
 
     def set_score_player_1(self, new_score):
@@ -18,7 +19,7 @@ class Match:
     def set_score_player_2(self, new_score):
         self.score2 = new_score
 
-    def show_players(self) -> str:
+    def show_players(self) -> List:
         return [self.player1, self.player2]
 
     def get_players(self):
@@ -101,7 +102,7 @@ class Round:
     def __init__(self, name, start_date) -> None:
         self.start_date = start_date
         self.name = name
-        self.list_of_match = []
+        self.list_of_match: List[None] = []
         self.end_date = None
 
     def add_game(self, game):
