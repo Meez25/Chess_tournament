@@ -101,6 +101,7 @@ class MainMenu(State):
             players_table.insert(player.__dict__)
 
         all_tournament = self.tournament_manager.get_list_of_all_tournament()
+
         tournaments_table = db.table("tournaments")
         tournaments_table.truncate()
         """
@@ -575,3 +576,9 @@ class ReportTournamentGames(State):
             else:
                 self.view.no_matchs()
                 self.view.press_enter_to_continue()
+
+
+def default(obj):
+    if hasattr(obj, "to_json"):
+        return obj.to_json()
+    raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")

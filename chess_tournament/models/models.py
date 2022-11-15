@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from itertools import count
 from typing import List
+import json
 
 
 class Match:
@@ -12,6 +13,16 @@ class Match:
         self.player2 = player2
         self.result: dict[None, None] = {}
         self.end_date = None
+
+    def __iter__(self):
+        yield from {
+            "score1": self.score1,
+            "score2": self.score2,
+            "player1": self.player1,
+            "player2": self.player2,
+            "result": self.result,
+            "end_date": self.end_date,
+        }.items()
 
     def set_score_player_1(self, new_score):
         self.score1 = new_score
@@ -96,6 +107,19 @@ class Player:
 
     def get_date_birthday(self):
         return self.date_of_birth
+
+    def to_json(self):
+        return json.dumps(dict(self), ensure_ascii=False)
+
+    def __iter__(self):
+        yield from {
+            "last_name": self.last_name,
+            "first_name": self.first_name,
+            "date_of_birth": self.date_of_birth,
+            "sex": self.sex,
+            "elo": self.elo,
+            "id": self.id,
+        }.items()
 
 
 class Round:
