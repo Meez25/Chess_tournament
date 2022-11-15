@@ -170,3 +170,4 @@ class Progress(Enum):
     SECOND_ROUND = 1
     THIRD_ROUND = 2
     FOURTH_ROUND = 3
+    TOURNAMENT_OVER = 4

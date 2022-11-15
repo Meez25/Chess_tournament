@@ -357,6 +357,10 @@ class View:
         """The tournament is over !"""
         print("Le tournoi est déjà terminé !")
 
+    def no_tournament_error(self):
+        """Display an error because there is no tournament"""
+        print("Il n'y a aucun tournoi à sélectionner\n")
+
 
 class Bcolors:
     """class helper for color"""

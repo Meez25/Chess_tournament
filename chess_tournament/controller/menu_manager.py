@@ -62,15 +62,15 @@ class MainMenu(State):
         user_option = self.view.get_user_option()
         if user_option == "1":
             self.menu_manager.transition_to(
-                Tournament_menu(self.view, self.tournament_manager, self.player_manager)
+                TournamentMenu(self.view, self.tournament_manager, self.player_manager)
             )
         elif user_option == "2":
             self.menu_manager.transition_to(
-                Player_menu(self.view, self.player_manager, self.tournament_manager)
+                PlayerMenu(self.view, self.player_manager, self.tournament_manager)
             )
         elif user_option == "3":
             self.menu_manager.transition_to(
-                Rapport_menu(self.view, self.player_manager, self.tournament_manager)
+                RapportMenu(self.view, self.player_manager, self.tournament_manager)
             )
         elif user_option == "4":
             self.go_back()
@@ -82,7 +82,7 @@ class MainMenu(State):
         sys.exit()
 
 
-class Tournament_menu(State):
+class TournamentMenu(State):
     """Menu that handles the tournament"""
 
     def __init__(self, view, tournament_manager, player_manager) -> None:
@@ -122,7 +122,11 @@ class Tournament_menu(State):
         if user_option == "4":
             self.view.clean_console()
             self.view.show_banner()
-            self.tournament_manager.change_selected_tournament()
+            if not self.tournament_manager.get_list_of_all_tournament():
+                self.view.no_tournament_error()
+                self.view.press_enter_to_continue()
+            else:
+                self.tournament_manager.change_selected_tournament()
         if user_option == "5":
             self.view.clean_console()
             self.view.show_banner()
@@ -143,7 +147,7 @@ class Tournament_menu(State):
         )
 
 
-class Player_menu(State):
+class PlayerMenu(State):
     """Menu for the player"""
 
     def __init__(self, view, player_manager, tournament_manager) -> None:
@@ -224,11 +228,11 @@ class AddPlayerToTournament(State):
     def go_back(self) -> None:
         """Go back to previous menu"""
         self.menu_manager.transition_to(
-            Tournament_menu(self.view, self.tournament_manager, self.player_manager)
+            TournamentMenu(self.view, self.tournament_manager, self.player_manager)
         )
 
 
-class Rapport_menu(State):
+class RapportMenu(State):
     """Menu for the player"""
 
     def __init__(self, view, player_manager, tournament_manager) -> None:

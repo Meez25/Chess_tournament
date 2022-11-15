@@ -196,8 +196,7 @@ class TournamentManager:
         self.tournament.set_progression(Progress.SECOND_ROUND)
 
     def do_a_round(self, n_round):
-
-        self.tournament.set_progression(Progress(n_round))
+        self.tournament.set_progression(Progress(n_round + 1))
         # Create the upcoming matches
         self.create_nth_round(n_round)
         # Display the list of generated matches
@@ -220,24 +219,24 @@ class TournamentManager:
                     self.tournament.get_number_of_player()
                 )
                 self.view.press_enter_to_continue()
-            elif self.tournament.get_progression().name == "FOURTH_ROUND":
+            elif self.tournament.get_progression() == Progress.TOURNAMENT_OVER:
                 self.view.tournament_is_over()
                 self.view.press_enter_to_continue()
             else:
                 wants_to_continue = True
-                if self.tournament.get_progression().value == 0:
+                if self.tournament.get_progression() == Progress.FIRST_ROUND:
                     self.do_first_round()
                     wants_to_continue = self.ask_exit_or_continue()
 
                 for i in range(self.tournament.get_progression().value, 4):
                     if wants_to_continue:
                         self.do_a_round(i)
-                        if self.tournament.get_progression().value < 3:
+                        if self.tournament.get_progression().value < 4:
                             wants_to_continue = self.ask_exit_or_continue()
                     else:
                         break
                     #
-                    if self.tournament.get_progression() == Progress.FOURTH_ROUND:
+                    if self.tournament.get_progression() == Progress.TOURNAMENT_OVER:
                         # End of tournament
                         ranking = self.sort_player()
                         self.view.display_ranking_end_of_tournament(ranking)
@@ -385,7 +384,7 @@ class TournamentManager:
         previous_round = []
         for player in self.tournament.get_list_of_player():
             player_point = 0
-            for round in self.tournament.get_list_of_rounds()[:-1]:
+            for round in self.tournament.get_list_of_rounds():
                 for match in round.get_list_of_match():
                     match_result = match.get_result()
                     if player == match_result[0][0]:
@@ -432,3 +431,7 @@ class TournamentManager:
                     del sorted_list[j - 1]
                 else:
                     j = j + 1
+
+    def get_list_of_all_tournament(self):
+        """Get the list of all the tournament"""
+        return self.tournament_list
