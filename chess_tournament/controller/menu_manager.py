@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from models.models import Progress
+from models.models import Progress, Tournament
 import sys
 
 
@@ -67,11 +67,11 @@ class MainMenu(State):
             )
         elif user_option == "2":
             self.menu_manager.transition_to(
-                PlayerMenu(self.view, self.player_manager, self.tournament_manager)
+                PlayerMenu(self.view, self.tournament_manager, self.player_manager)
             )
         elif user_option == "3":
             self.menu_manager.transition_to(
-                RapportMenu(self.view, self.player_manager, self.tournament_manager)
+                ReportMenu(self.view, self.tournament_manager, self.player_manager)
             )
         elif user_option == "4":
             self.go_back()
@@ -157,7 +157,7 @@ class TournamentMenu(State):
 class PlayerMenu(State):
     """Menu for the player"""
 
-    def __init__(self, view, player_manager, tournament_manager) -> None:
+    def __init__(self, view, tournament_manager, player_manager) -> None:
         self.view = view
         self.player_manager = player_manager
         self.tournament_manager = tournament_manager
@@ -239,23 +239,308 @@ class AddPlayerToTournament(State):
         )
 
 
-class RapportMenu(State):
+class ReportMenu(State):
     """Menu for the player"""
 
-    def __init__(self, view, player_manager, tournament_manager) -> None:
+    def __init__(self, view, tournament_manager, player_manager) -> None:
         self.view = view
         self.player_manager = player_manager
         self.tournament_manager = tournament_manager
 
     def print_menu(self) -> None:
         """Display the player menu by calling the view"""
-        self.go_back()
+        self.view.clean_console()
+        self.view.show_banner()
+        self.view.display_report_menu()
 
     def get_user_option(self) -> None:
-        ...
+        user_option = self.view.get_user_option()
+        if user_option == "1":
+            self.view.clean_console()
+            self.view.show_banner()
+            self.menu_manager.transition_to(
+                ReportPlayers(self.view, self.tournament_manager, self.player_manager)
+            )
+        elif user_option == "2":
+            self.view.clean_console()
+            self.view.show_banner()
+            self.menu_manager.transition_to(
+                ReportTournamentPlayer(
+                    self.view, self.tournament_manager, self.player_manager
+                )
+            )
+        elif user_option == "3":
+            self.view.clean_console()
+            self.view.show_banner()
+            self.menu_manager.transition_to(
+                ReportTournaments(
+                    self.view, self.tournament_manager, self.player_manager
+                )
+            )
+        elif user_option == "4":
+            self.view.clean_console()
+            self.view.show_banner()
+            self.menu_manager.transition_to(
+                ReportTournamentsRounds(
+                    self.view, self.tournament_manager, self.player_manager
+                )
+            )
+        elif user_option == "5":
+            self.view.clean_console()
+            self.view.show_banner()
+            self.menu_manager.transition_to(
+                ReportTournamentGames(
+                    self.view, self.tournament_manager, self.player_manager
+                )
+            )
+        elif user_option == "6":
+            self.go_back()
 
     def go_back(self) -> None:
         """Go back to previous menu"""
         self.menu_manager.transition_to(
             MainMenu(self.view, self.tournament_manager, self.player_manager)
         )
+
+
+class ReportPlayers(State):
+    """Report to display all players"""
+
+    def __init__(
+        self, view, tournament_manager, player_manager, list_of_player=None
+    ) -> None:
+        self.view = view
+        self.player_manager = player_manager
+        self.tournament_manager = tournament_manager
+
+    def print_menu(self) -> None:
+        """Display the player menu by calling the view"""
+        self.view.clean_console()
+        self.view.show_banner()
+        self.view.display_all_player_report_options()
+
+    def get_user_option(self) -> None:
+        user_option = self.view.get_user_option()
+        if user_option == "1":
+            self.generate_report("alpha")
+        elif user_option == "2":
+            self.generate_report("elo")
+        else:
+            self.go_back()
+
+    def go_back(self) -> None:
+        """Go back to previous menu"""
+        self.menu_manager.transition_to(
+            ReportMenu(self.view, self.tournament_manager, self.player_manager)
+        )
+
+    def generate_report(self, method="alpha", list_of_player=None):
+        if not list_of_player:
+            player_list = self.player_manager.get_all_players()
+        else:
+            player_list = list_of_player
+        if method == "alpha":
+            player_list.sort(key=lambda x: x.get_last_name())
+        elif method == "elo":
+            player_list.sort(key=lambda x: x.get_elo())
+        self.view.display_list_of_player(player_list)
+        self.view.press_enter_to_continue()
+
+
+class ReportTournamentPlayer(State):
+    """Report to display all the player of a tournament"""
+
+    def __init__(self, view, tournament_manager, player_manager) -> None:
+        self.view = view
+        self.player_manager = player_manager
+        self.tournament_manager = tournament_manager
+
+    def print_menu(self) -> None:
+        """Display the player menu by calling the view"""
+        self.ask_tournament()
+
+    def get_user_option(self) -> None:
+        user_option = self.view.get_user_option()
+        if user_option == "1":
+            self.generate_report("alpha")
+            self.menu_manager.transition_to(
+                ReportMenu(self.view, self.tournament_manager, self.player_manager)
+            )
+        elif user_option == "2":
+            self.generate_report("elo")
+            self.menu_manager.transition_to(
+                ReportMenu(self.view, self.tournament_manager, self.player_manager)
+            )
+        else:
+            self.go_back()
+
+    def go_back(self) -> None:
+        """Go back to previous menu"""
+        self.menu_manager.transition_to(
+            ReportMenu(self.view, self.tournament_manager, self.player_manager)
+        )
+
+    def ask_tournament(self):
+        # Ask for which tournament the report is needed
+        tournament_asked = None
+        player_in_asked_tournament = None
+        tournament_list = self.tournament_manager.get_list_of_all_tournament()
+        self.view.display_list_of_tournament(tournament_list)
+        if tournament_list:
+
+            tournament_to_select = self.view.get_tournament_to_select().strip()
+            found = 0
+            for tournament in tournament_list:
+                if tournament.name.lower() == tournament_to_select.lower():
+                    tournament_asked = tournament
+                    self.view.display_selected_tournament(tournament_to_select)
+                    found = 1
+                    break
+            if not found:
+                self.view.tournament_selected_not_found(tournament_to_select)
+                self.view.press_enter_to_continue()
+
+        if isinstance(tournament_asked, Tournament):
+            self.player_in_asked_tournament = tournament_asked.get_list_of_player()
+            self.view.display_all_player_report_options()
+
+    def generate_report(self, method="alpha"):
+        player_list = self.player_in_asked_tournament
+        if method == "alpha":
+            player_list.sort(key=lambda x: x.get_last_name())
+        elif method == "elo":
+            player_list.sort(key=lambda x: x.get_elo())
+        self.view.display_list_of_player(player_list)
+        self.view.press_enter_to_continue()
+
+
+class ReportTournaments(State):
+    """Report to display all tournament"""
+
+    def __init__(self, view, tournament_manager, player_manager) -> None:
+        self.view = view
+        self.player_manager = player_manager
+        self.tournament_manager = tournament_manager
+
+    def print_menu(self) -> None:
+        """Display the player menu by calling the view"""
+        self.tournament_manager.display_all_tournament()
+
+    def get_user_option(self) -> None:
+        self.menu_manager.transition_to(
+            ReportMenu(self.view, self.tournament_manager, self.player_manager)
+        )
+
+    def go_back(self) -> None:
+        """Go back to previous menu"""
+        self.menu_manager.transition_to(
+            ReportMenu(self.view, self.tournament_manager, self.player_manager)
+        )
+
+
+class ReportTournamentsRounds(State):
+    """Report to display all tournament round"""
+
+    def __init__(self, view, tournament_manager, player_manager) -> None:
+        self.view = view
+        self.player_manager = player_manager
+        self.tournament_manager = tournament_manager
+
+    def print_menu(self) -> None:
+        """Display the player menu by calling the view"""
+        self.ask_tournament()
+
+    def get_user_option(self) -> None:
+        self.menu_manager.transition_to(
+            ReportMenu(self.view, self.tournament_manager, self.player_manager)
+        )
+
+    def go_back(self) -> None:
+        """Go back to previous menu"""
+        self.menu_manager.transition_to(
+            ReportMenu(self.view, self.tournament_manager, self.player_manager)
+        )
+
+    def ask_tournament(self):
+        # Ask for which tournament the report is needed
+        tournament_asked = None
+        self.round_in_asked_tournament = None
+        tournament_list = self.tournament_manager.get_list_of_all_tournament()
+        self.view.display_list_of_tournament(tournament_list)
+        if tournament_list:
+
+            tournament_to_select = self.view.get_tournament_to_select().strip()
+            found = 0
+            for tournament in tournament_list:
+                if tournament.name.lower() == tournament_to_select.lower():
+                    tournament_asked = tournament
+                    self.view.display_selected_tournament(tournament_to_select)
+                    found = 1
+                    break
+            if not found:
+                self.view.tournament_selected_not_found(tournament_to_select)
+                self.view.press_enter_to_continue()
+
+        if isinstance(tournament_asked, Tournament):
+            self.round_in_asked_tournament = tournament_asked.get_list_of_rounds()
+            if self.round_in_asked_tournament:
+                self.view.display_rounds(self.round_in_asked_tournament)
+                self.view.press_enter_to_continue()
+            else:
+                self.view.no_round()
+                self.view.press_enter_to_continue()
+
+
+class ReportTournamentGames(State):
+    """Report to display all games of a tournaments"""
+
+    def __init__(self, view, tournament_manager, player_manager) -> None:
+        self.view = view
+        self.player_manager = player_manager
+        self.tournament_manager = tournament_manager
+
+    def print_menu(self) -> None:
+        """Display the player menu by calling the view"""
+        self.ask_tournament()
+
+    def get_user_option(self) -> None:
+        self.menu_manager.transition_to(
+            ReportMenu(self.view, self.tournament_manager, self.player_manager)
+        )
+
+    def go_back(self) -> None:
+        """Go back to previous menu"""
+        self.menu_manager.transition_to(
+            ReportMenu(self.view, self.tournament_manager, self.player_manager)
+        )
+
+    def ask_tournament(self):
+        # Ask for which tournament the report is needed
+        tournament_asked = None
+        match_in_asked_tournament = []
+        tournament_list = self.tournament_manager.get_list_of_all_tournament()
+        self.view.display_list_of_tournament(tournament_list)
+        if tournament_list:
+
+            tournament_to_select = self.view.get_tournament_to_select().strip()
+            found = 0
+            for tournament in tournament_list:
+                if tournament.name.lower() == tournament_to_select.lower():
+                    tournament_asked = tournament
+                    self.view.display_selected_tournament(tournament_to_select)
+                    found = 1
+                    break
+            if not found:
+                self.view.tournament_selected_not_found(tournament_to_select)
+                self.view.press_enter_to_continue()
+
+        if isinstance(tournament_asked, Tournament):
+            for round in tournament_asked.get_list_of_rounds():
+                for match in round.get_list_of_match():
+                    match_in_asked_tournament.append(match)
+            if match_in_asked_tournament:
+                self.view.display_matchs(match_in_asked_tournament)
+                self.view.press_enter_to_continue()
+            else:
+                self.view.no_matchs()
+                self.view.press_enter_to_continue()

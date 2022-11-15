@@ -113,6 +113,15 @@ class Round:
     def set_end_date(self, date):
         self.end_date = date
 
+    def get_name(self):
+        return self.name
+
+    def get_start_date(self):
+        return self.start_date
+
+    def get_end_date(self):
+        return self.end_date
+
 
 class Tournament:
     def __init__(self, name, location, date, time_control, description):

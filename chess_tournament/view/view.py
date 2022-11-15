@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 
 class View:
@@ -140,6 +141,7 @@ class View:
         return tournament_to_delete
 
     def get_tournament_to_select(self):
+        print("")
         tournament_to_select = input("Nom du tournoi à sélectionner : ")
         return tournament_to_select
 
@@ -312,7 +314,6 @@ class View:
         else:
             for tournament in list_of_tournament:
                 print(f"          - {tournament.name}")
-        print("\n")
 
     def display_selected_tournament(self, selected_tournament):
         """Display the tournament selected by the user"""
@@ -368,6 +369,55 @@ class View:
     def tournament_playing_error(self):
         """The player cannot be changed"""
         print("Les joueurs ne peuvent pas être changé car le tournoi a débuté.")
+
+    def display_report_menu(self):
+        """Display the report menu"""
+        print(
+            "Que voulez-vous voir ?\n\n"
+            "          1 : Tous les joueurs\n"
+            "          2 : Tous les joueurs d'un tournoi\n"
+            "          3 : Tous les tournois\n"
+            "          4 : Tous les tours d'un tournoi\n"
+            "          5 : Tous les matchs d'un tournoi\n"
+            "          6 : Retour\n"
+        )
+
+    def display_all_player_report_options(self):
+        """Display all option for the player report"""
+        print(
+            "Comment voulez-vous voir le rapport ?\n\n"
+            "          1 : Ordre alphabétique\n"
+            "          2 : Par elo\n"
+            "          3 : Retour\n"
+        )
+
+    def format_date(self, date: datetime):
+        return date.strftime("%d/%m/%y %H:%M")
+
+    def display_rounds(self, rounds):
+        """Display the list of rounds"""
+        print("Voici la liste des tours :\n")
+        print(
+            (
+                "\n".join(
+                    f"Nom : {round.get_name()}, date de début : {self.format_date(round.get_start_date())}, date de fin : {self.format_date(round.get_end_date())}"
+                    for round in rounds
+                )
+            )
+        )
+
+    def no_round(self):
+        """Display no round error"""
+        print("\nIl n'y a pas encore de tours dans le tournoi.\n")
+
+    def display_matchs(self, matchs):
+        """Display the list of matchs"""
+        print("Voici la liste des matchs :\n")
+        print(("\n".join(f"{match.get_result()}" for match in matchs)))
+
+    def no_matchs(self):
+        """Display no round error"""
+        print("\nIl n'y a pas encore de matchs dans le tournoi.\n")
 
 
 class Bcolors:
