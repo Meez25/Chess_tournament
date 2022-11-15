@@ -15,10 +15,20 @@ class TournamentManager:
         for player in self.player_manager.get_all_players():
             self.tournament.add_player_in_list(player)
 
+    def get_tournament_object(self):
+        return self.tournament
+
     def create_tournament(self):
         """Create a tournament by calling the view and adding
         it to the list of tournament"""
-        tournament_name = self.get_tournament_name()
+        while True:
+            tournament_name = self.get_tournament_name()
+            if not tournament_name:
+                self.view.name_cannot_be_empty()
+                continue
+            else:
+                break
+
         tournament_location = self.get_tournament_location()
         tournament_date = self.get_tournament_date()
         time_control = self.get_time_control()

@@ -361,6 +361,14 @@ class View:
         """Display an error because there is no tournament"""
         print("Il n'y a aucun tournoi à sélectionner\n")
 
+    def name_cannot_be_empty(self):
+        """Display error that the name is empty"""
+        print("Le nom ne peut pas être vide")
+
+    def tournament_playing_error(self):
+        """The player cannot be changed"""
+        print("Les joueurs ne peuvent pas être changé car le tournoi a débuté.")
+
 
 class Bcolors:
     """class helper for color"""

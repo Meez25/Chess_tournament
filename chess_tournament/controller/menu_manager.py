@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from models.models import Progress
 import sys
 
 
@@ -112,6 +113,12 @@ class TournamentMenu(State):
             self.view.show_banner()
             if not self.tournament_manager.get_tournament():
                 self.view.display_no_tournament_selected()
+                self.view.press_enter_to_continue()
+            elif (
+                self.tournament_manager.get_tournament_object().get_progression()
+                != Progress.FIRST_ROUND
+            ):
+                self.view.tournament_playing_error()
                 self.view.press_enter_to_continue()
             else:
                 self.menu_manager.transition_to(
