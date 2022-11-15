@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from models.models import Progress, Tournament
 import sys
+from tinydb import TinyDB
+import json
 
 
 class MenuManager:
@@ -74,6 +76,12 @@ class MainMenu(State):
                 ReportMenu(self.view, self.tournament_manager, self.player_manager)
             )
         elif user_option == "4":
+            # Do the save
+            self.save_objects()
+        elif user_option == "5":
+            # Do the load
+            ...
+        elif user_option == "6":
             self.go_back()
         self.view.clean_console()
         self.view.show_banner()
@@ -81,6 +89,29 @@ class MainMenu(State):
     def go_back(self) -> None:
         """Exit the program"""
         sys.exit()
+
+    def save_objects(self):
+        # Serialize Players in a dict
+        db = TinyDB("db.json")
+
+        players_table = db.table("players")
+        players_table.truncate()
+        all_players = self.player_manager.get_all_players()
+        for player in all_players:
+            players_table.insert(player.__dict__)
+
+        all_tournament = self.tournament_manager.get_list_of_all_tournament()
+        tournaments_table = db.table("tournaments")
+        tournaments_table.truncate()
+        """
+        for tournament in all_tournament:
+            var = json.dumps(tournament, default=lambda o: o.__dict__, indent=4)
+            tournaments_table.insert(json)
+        """
+
+        self.view.save_success()
+        self.view.press_enter_to_continue()
+        # Save the list
 
 
 class TournamentMenu(State):

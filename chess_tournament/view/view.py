@@ -212,7 +212,9 @@ class View:
             "          1 : Gestion des tournois\n"
             "          2 : Gérer les joueurs\n"
             "          3 : Rapports\n"
-            "          4 : Quitter l'application\n"
+            "          4 : Sauvegarder\n"
+            "          5 : Charger\n"
+            "          6 : Quitter l'application\n"
         )
 
     def display_player_menu(self):
@@ -418,6 +420,10 @@ class View:
     def no_matchs(self):
         """Display no round error"""
         print("\nIl n'y a pas encore de matchs dans le tournoi.\n")
+
+    def save_success(self):
+        """Display success message on save db"""
+        print("La base de donnée a bien été sauvegardé.")
 
 
 class Bcolors:
