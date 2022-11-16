@@ -337,7 +337,7 @@ class TournamentManager:
         n_round = self.tournament.get_list_of_rounds()[n]
         game_list = n_round.get_list_of_match()
         for game in game_list:
-            player1, player2 = game.show_players()
+            player1, player2 = game.get_players()
             self.view.display_nth_round_games(player1, player2)
 
     def get_match_results(self, n):

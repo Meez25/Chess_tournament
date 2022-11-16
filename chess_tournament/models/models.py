@@ -1,16 +1,13 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from itertools import count
-from typing import List
-import json
 
 
 class Match:
     def __init__(self, player1, player2) -> None:
         self.player1 = player1
         self.player2 = player2
-        self.result: dict[None, None] = {}
-        self.end_date = None
+        self.result = {}
 
     def serialize(self):
         return {
@@ -21,9 +18,6 @@ class Match:
                 "1": {"0": self.result[1][0].serialize(), "1": self.result[1][1]},
             },
         }
-
-    def show_players(self) -> List:
-        return [self.player1, self.player2]
 
     def get_players(self):
         return [self.player1, self.player2]
