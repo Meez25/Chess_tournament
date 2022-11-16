@@ -101,14 +101,14 @@ class MainMenu(State):
             players_table.insert(player.__dict__)
 
         all_tournament = self.tournament_manager.get_list_of_all_tournament()
+        tournament_to_tiny = {}
+
+        for i, tournament in enumerate(all_tournament):
+            tournament_to_tiny[i] = tournament.serialize()
 
         tournaments_table = db.table("tournaments")
         tournaments_table.truncate()
-        """
-        for tournament in all_tournament:
-            var = json.dumps(tournament, default=lambda o: o.__dict__, indent=4)
-            tournaments_table.insert(json)
-        """
+        tournaments_table.insert(tournament_to_tiny)
 
         self.view.save_success()
         self.view.press_enter_to_continue()

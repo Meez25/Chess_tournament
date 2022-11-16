@@ -7,38 +7,26 @@ import json
 
 class Match:
     def __init__(self, player1, player2) -> None:
-        self.score1 = 0
-        self.score2 = 0
         self.player1 = player1
         self.player2 = player2
         self.result: dict[None, None] = {}
         self.end_date = None
 
-    def __iter__(self):
-        yield from {
-            "score1": self.score1,
-            "score2": self.score2,
-            "player1": self.player1,
-            "player2": self.player2,
-            "result": self.result,
-            "end_date": self.end_date,
-        }.items()
-
-    def set_score_player_1(self, new_score):
-        self.score1 = new_score
-
-    def set_score_player_2(self, new_score):
-        self.score2 = new_score
+    def serialize(self):
+        return {
+            "player1": self.player1.serialize(),
+            "player2": self.player2.serialize(),
+            "result": {
+                "0": {"0": self.result[0][0].serialize(), "1": self.result[0][1]},
+                "1": {"0": self.result[1][0].serialize(), "1": self.result[1][1]},
+            },
+        }
 
     def show_players(self) -> List:
         return [self.player1, self.player2]
 
     def get_players(self):
         return [self.player1, self.player2]
-
-    def add_score_to_players(self):
-        self.player1.set_score(self.player1.get_score() + self.score1)
-        self.player2.set_score(self.player2.get_score() + self.score2)
 
     def set_result(self, player, score):
         self.result = list(self.result)
@@ -108,18 +96,8 @@ class Player:
     def get_date_birthday(self):
         return self.date_of_birth
 
-    def to_json(self):
-        return json.dumps(dict(self), ensure_ascii=False)
-
-    def __iter__(self):
-        yield from {
-            "last_name": self.last_name,
-            "first_name": self.first_name,
-            "date_of_birth": self.date_of_birth,
-            "sex": self.sex,
-            "elo": self.elo,
-            "id": self.id,
-        }.items()
+    def serialize(self):
+        return self.__dict__
 
 
 class Round:
@@ -147,6 +125,19 @@ class Round:
     def get_end_date(self):
         return self.end_date
 
+    def format_date(self, date):
+        return date.strftime("%d/%m/%y %H:%M")
+
+    def serialize(self) -> dict:
+        output = {}
+        output["name"] = self.name
+        output["start_date"] = self.format_date(self.start_date)
+        output["end_date"] = self.format_date(self.end_date)
+        list_of_match = []
+        [list_of_match.append(match.serialize()) for match in self.list_of_match]
+        output["list_of_match"] = list_of_match
+        return output
+
 
 class Tournament:
     def __init__(self, name, location, date, time_control, description):
@@ -161,6 +152,22 @@ class Tournament:
 
         self.NUMBER_OF_ROUNDS = 4
         self.NUMBER_OF_PLAYER = 8
+
+    def serialize(self):
+        output = {}
+        output["name"] = self.name
+        output["location"] = self.location
+        output["date"] = self.date
+        output["time_control"] = self.time_control
+        output["description"] = self.description
+        list_of_player = []
+        [list_of_player.append(player.serialize()) for player in self.list_of_players]
+        output["list_of_player"] = list_of_player
+        list_of_round = []
+        [list_of_round.append(round.serialize()) for round in self.list_of_rounds]
+        output["list_of_round"] = list_of_round
+        output["progression"] = self.progression.value
+        return output
 
     def add_round(self, nround):
         self.list_of_rounds.append(nround)
