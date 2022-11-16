@@ -1,9 +1,11 @@
 from controller.controller import Controller
+from view.view import View  # type:ignore
 
 
 def main():
     """Start the main program"""
-    program = Controller()
+    view = View()
+    program = Controller(view)
     program.run()
 
 

@@ -1,4 +1,4 @@
-from models.models import Tournament, Player
+from chess_tournament.models.models import Tournament, Player
 
 
 def test_handle_tournament() -> None:

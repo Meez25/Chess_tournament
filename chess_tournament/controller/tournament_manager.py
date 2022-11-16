@@ -7,13 +7,7 @@ class TournamentManager:
         self.view = view
         self.player_manager = player_manager
         self.tournament_list = []
-        # self.tournament = None
-
-        # Add test data
-        self.tournament = Tournament("Mulhouse", "", "", "", "")
-        self.tournament_list.append(self.tournament)
-        for player in self.player_manager.list_of_player:
-            self.tournament.add_player_in_list(player)
+        self.tournament = None
 
     def get_tournament(self):
         return self.tournament
