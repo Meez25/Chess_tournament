@@ -54,41 +54,9 @@ class Player:
             f"Elo : {self.elo}"
         )
 
-    def set_last_name(self, last_name):
-        self.last_name = last_name
-
-    def set_first_name(self, first_name):
-        self.first_name = first_name
-
-    def set_date_of_birth(self, date_of_birth):
-        self.date_of_birth = date_of_birth
-
-    def set_sex(self, sex):
-        self.sex = sex
-
-    def set_elo(self, elo):
-        self.elo = elo
-
     def __repr__(self):
+        """Representation of the object"""
         return self.last_name
-
-    def get_last_name(self):
-        return self.last_name
-
-    def get_first_name(self):
-        return self.first_name
-
-    def get_elo(self):
-        return self.elo
-
-    def get_sex(self):
-        return self.sex
-
-    def get_id(self):
-        return self.id
-
-    def get_date_birthday(self):
-        return self.date_of_birth
 
     def serialize(self):
         return self.__dict__
@@ -98,26 +66,11 @@ class Round:
     def __init__(self, name, start_date) -> None:
         self.start_date = start_date
         self.name = name
-        self.list_of_match: List[None] = []
+        self.list_of_match = []
         self.end_date = None
 
     def add_game(self, game):
         self.list_of_match.append(game)
-
-    def get_list_of_match(self):
-        return self.list_of_match
-
-    def set_end_date(self, date):
-        self.end_date = date
-
-    def get_name(self):
-        return self.name
-
-    def get_start_date(self):
-        return self.start_date
-
-    def get_end_date(self):
-        return self.end_date
 
     def format_date(self, date):
         return date.strftime("%d/%m/%y %H:%M")
@@ -166,29 +119,11 @@ class Tournament:
     def add_round(self, nround):
         self.list_of_rounds.append(nround)
 
-    def get_list_of_rounds(self):
-        return self.list_of_rounds
-
-    def get_list_of_player(self):
-        return self.list_of_players
-
     def add_player_in_list(self, player):
         self.list_of_players.append(player)
 
     def remove_player_in_list(self, player):
         self.list_of_players.remove(player)
-
-    def get_tournament_name(self):
-        return self.name
-
-    def get_number_of_player(self):
-        return self.NUMBER_OF_PLAYER
-
-    def set_progression(self, progression):
-        self.progression = progression
-
-    def get_progression(self):
-        return self.progression
 
     def __str__(self) -> str:
         return (

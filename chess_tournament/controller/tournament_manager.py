@@ -7,22 +7,22 @@ class TournamentManager:
         self.view = view
         self.player_manager = player_manager
         self.tournament_list = []
-        # self.tournament = ""
+        # self.tournament = None
 
         # Add test data
         self.tournament = Tournament("Mulhouse", "", "", "", "")
         self.tournament_list.append(self.tournament)
-        for player in self.player_manager.get_all_players():
+        for player in self.player_manager.list_of_player:
             self.tournament.add_player_in_list(player)
 
-    def get_tournament_object(self):
+    def get_tournament(self):
         return self.tournament
 
     def create_tournament(self):
         """Create a tournament by calling the view and adding
         it to the list of tournament"""
         while True:
-            tournament_name = self.get_tournament_name()
+            tournament_name = self.get_tournament_name_from_view()
             if not tournament_name:
                 self.view.name_cannot_be_empty()
                 continue
@@ -44,25 +44,22 @@ class TournamentManager:
         self.view.tournament_added_successfully()
         self.view.press_enter_to_continue()
 
-    def get_tournament(self):
+    def get_tournament_name(self):
         """Get the current tournament"""
         if not self.tournament:
             return ""
         else:
-            return self.tournament.get_tournament_name()
+            return self.tournament.name
 
     def add_player_to_tournament(self, player):
         """Add a player to the current tournament"""
-        if (
-            len(self.tournament.list_of_players)
-            < self.tournament.get_number_of_player()
-        ):
+        if len(self.tournament.list_of_players) < self.tournament.NUMBER_OF_PLAYER:
             self.tournament.add_player_in_list(player)
         else:
-            self.view.enough_number_of_player(self.tournament.get_number_of_player())
+            self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
             self.view.press_enter_to_continue()
 
-    def get_tournament_name(self):
+    def get_tournament_name_from_view(self):
         """Get the current tournament's name"""
         tournament_name = self.view.get_tournament_name()
         return tournament_name
@@ -89,22 +86,22 @@ class TournamentManager:
 
     def add_existing_player_to_tournament(self):
         """Add an existing player to the current tournament"""
-        # If there is no player in the "database, send error message"
-        if not self.player_manager.get_all_players():
+        # If there is no player in the "database", send error message
+        if not self.player_manager.list_of_player:
 
             self.view.display_no_existing_player()
             self.view.press_enter_to_continue()
         else:
             # Display the list of all players so the user can select
-            list_of_all_players = self.player_manager.get_all_players()
+            list_of_all_players = self.player_manager.list_of_player
             self.view.display_existing_player_to_add(list_of_all_players)
 
-            list_of_tournament_player = self.tournament.get_list_of_player()
+            list_of_tournament_player = self.tournament.list_of_player
 
             # Get the choice of the user
             player_index = self.view.get_index_of_player()
             for player in list_of_all_players:
-                if player.get_id() == int(player_index):
+                if player.id == int(player_index):
                     # If the player is not already in the tournament
                     # Add the player to tournament
                     if player not in list_of_tournament_player:
@@ -162,23 +159,23 @@ class TournamentManager:
 
     def display_tournament_players(self):
         """Display the list of player in the tournament"""
-        if not self.tournament.get_list_of_player():
+        if not self.tournament.list_of_player:
             self.view.display_no_player_in_tournament()
         else:
-            self.view.display_list_of_player(self.tournament.get_list_of_player())
+            self.view.display_list_of_player(self.tournament.list_of_player)
         self.view.press_enter_to_continue()
 
     def remove_player_from_tournament(self):
         """Remove a player from the tournament"""
 
-        if not self.tournament.get_list_of_player():
+        if not self.tournament.list_of_player:
             self.view.display_no_player_in_tournament()
             self.view.press_enter_to_continue()
         else:
-            self.view.which_player_to_delete(self.tournament.get_list_of_player())
+            self.view.which_player_to_delete(self.tournament.list_of_player)
             player_to_delete = self.view.get_player_to_delete_from_tournament().strip()
-            for player in self.tournament.get_list_of_player():
-                if int(player_to_delete) == player.get_id():
+            for player in self.tournament.list_of_player:
+                if int(player_to_delete) == player.id:
                     self.tournament.remove_player_in_list(player)
                     self.view.player_removed_from_tournament(int(player_to_delete))
                     self.view.press_enter_to_continue()
@@ -195,7 +192,7 @@ class TournamentManager:
         return wants_to_continue
 
     def do_first_round(self):
-        self.tournament.set_progression(Progress.FIRST_ROUND)
+        self.tournament.progression = Progress.FIRST_ROUND
         self.create_first_round()
 
         # Display the matchs to play
@@ -203,10 +200,10 @@ class TournamentManager:
 
         # Ask for results
         self.get_match_results(0)
-        self.tournament.set_progression(Progress.SECOND_ROUND)
+        self.tournament.progression = Progress.SECOND_ROUND
 
     def do_a_round(self, n_round):
-        self.tournament.set_progression(Progress(n_round + 1))
+        self.tournament.progression = Progress(n_round + 1)
         # Create the upcoming matches
         self.create_nth_round(n_round)
         # Display the list of generated matches
@@ -223,30 +220,30 @@ class TournamentManager:
         else:
             if (
                 not len(self.tournament.list_of_players)
-                == self.tournament.get_number_of_player()
+                == self.tournament.NUMBER_OF_PLAYER
             ):
                 self.view.display_need_x_number_of_player(
-                    self.tournament.get_number_of_player()
+                    self.tournament.NUMBER_OF_PLAYER
                 )
                 self.view.press_enter_to_continue()
-            elif self.tournament.get_progression() == Progress.TOURNAMENT_OVER:
+            elif self.tournament.progression == Progress.TOURNAMENT_OVER:
                 self.view.tournament_is_over()
                 self.view.press_enter_to_continue()
             else:
                 wants_to_continue = True
-                if self.tournament.get_progression() == Progress.FIRST_ROUND:
+                if self.tournament.progression == Progress.FIRST_ROUND:
                     self.do_first_round()
                     wants_to_continue = self.ask_exit_or_continue()
 
-                for i in range(self.tournament.get_progression().value, 4):
+                for i in range(self.tournament.progression.value, 4):
                     if wants_to_continue:
                         self.do_a_round(i)
-                        if self.tournament.get_progression().value < 4:
+                        if self.tournament.progression.value < 4:
                             wants_to_continue = self.ask_exit_or_continue()
                     else:
                         break
-                    #
-                    if self.tournament.get_progression() == Progress.TOURNAMENT_OVER:
+
+                    if self.tournament.progression == Progress.TOURNAMENT_OVER:
                         # End of tournament
                         ranking = self.sort_player()
                         self.view.display_ranking_end_of_tournament(ranking)
@@ -313,20 +310,20 @@ class TournamentManager:
 
     def create_first_round(self):
         """Create the first round"""
-        # Create first round
+
         first_round = Round("Round 1", datetime.now())
         self.tournament.add_round(first_round)
 
         # Sort player by Elo
-        self.tournament.get_list_of_player().sort(key=lambda x: x.elo)
+        self.tournament.list_of_players.sort(key=lambda x: x.elo)
 
         # Split the list in 2 groups
-        middle_index = int(len(self.tournament.get_list_of_player()) / 2)
-        high_elo = self.tournament.get_list_of_player()[:middle_index]
-        low_elo = self.tournament.get_list_of_player()[middle_index:]
+        middle_index = int(len(self.tournament.list_of_players) / 2)
+        high_elo = self.tournament.list_of_players[:middle_index]
+        low_elo = self.tournament.list_of_players[middle_index:]
 
         # Create 4 matches for the first round
-        for i in range(int(self.tournament.get_number_of_player() / 2)):
+        for i in range(int(self.tournament.NUMBER_OF_PLAYER / 2)):
             first_round.add_game(Match(high_elo[i], low_elo[i]))
 
     def show_nth_round(self, n):
@@ -334,24 +331,24 @@ class TournamentManager:
         self.view.clean_console()
         self.view.show_banner()
         self.view.announce_matches()
-        n_round = self.tournament.get_list_of_rounds()[n]
-        game_list = n_round.get_list_of_match()
+        n_round = self.tournament.list_of_rounds[n]
+        game_list = n_round.list_of_match
         for game in game_list:
             player1, player2 = game.get_players()
             self.view.display_nth_round_games(player1, player2)
 
     def get_match_results(self, n):
         """Ask 8 times for the results of matches"""
-        for i in range(int(self.tournament.get_number_of_player() / 2)):
+        for i in range(int(self.tournament.NUMBER_OF_PLAYER / 2)):
             self.enter_match_results(n, i)
 
     def enter_match_results(self, nth_round, nth_match):
         """Get the result for the nth match of the nth round"""
 
-        n_round = self.tournament.get_list_of_rounds()[nth_round]
+        n_round = self.tournament.list_of_rounds[nth_round]
         # Match is considered over so we get the time
-        n_round.set_end_date(datetime.now())
-        game = n_round.get_list_of_match()[nth_match]
+        n_round.end_date = datetime.now()
+        game = n_round.list_of_match[nth_match]
         players = game.get_players()
         # Add the already played player to the player
 
@@ -364,11 +361,9 @@ class TournamentManager:
                         if "," in score:
                             score = score.replace(",", ".")
                         valid_input = 1
-                        self.tournament.get_list_of_rounds()[
-                            nth_round
-                        ].get_list_of_match()[nth_match].set_result(
-                            player, float(score)
-                        )
+                        self.tournament.list_of_rounds[nth_round].list_of_match[
+                            nth_match
+                        ].set_result(player, float(score))
 
                     else:
                         self.view.display_score_error()
@@ -380,11 +375,9 @@ class TournamentManager:
                         if "," in score:
                             score = score.replace(",", ".")
                         valid_input = 1
-                        self.tournament.get_list_of_rounds()[
-                            nth_round
-                        ].get_list_of_match()[nth_match].set_result(
-                            player, float(score)
-                        )
+                        self.tournament.list_of_rounds[nth_round].list_of_match[
+                            nth_match
+                        ].set_result(player, float(score))
 
                     else:
                         self.view.display_score_error()
@@ -392,25 +385,25 @@ class TournamentManager:
     def sort_player(self):
         """Get the result of the previous rounds per player and make a sorted list"""
         previous_round = []
-        for player in self.tournament.get_list_of_player():
+        for player in self.tournament.list_of_players:
             player_point = 0
-            for round in self.tournament.get_list_of_rounds():
-                for match in round.get_list_of_match():
+            for round in self.tournament.list_of_rounds:
+                for match in round.list_of_match:
                     match_result = match.get_result()
                     if player == match_result[0][0]:
                         player_point = player_point + match_result[0][1]
                     elif player == match_result[1][0]:
                         player_point = player_point + match_result[1][1]
             previous_round.append([player, player_point])
-        previous_round.sort(key=lambda x: (x[1], x[0].get_elo()), reverse=True)
+        previous_round.sort(key=lambda x: (x[1], x[0].elo), reverse=True)
         return previous_round
 
     def get_list_already_played(self, player):
         """Returns a list of player and their already played opponents"""
         played_played = []
         # Loop through last round except current one to see already played players
-        for round in self.tournament.get_list_of_rounds()[:-1]:
-            for match in round.get_list_of_match():
+        for round in self.tournament.list_of_rounds[:-1]:
+            for match in round.list_of_match:
                 match_result = match.get_result()
                 if player == match_result[0][0]:
                     played_played.append(match_result[1][0])
@@ -427,7 +420,7 @@ class TournamentManager:
         sorted_list = self.sort_player()
 
         # Create 4 matches for the nth round
-        for _ in range(int(self.tournament.get_number_of_player() / 2)):
+        for _ in range(int(self.tournament.NUMBER_OF_PLAYER / 2)):
             found = False
             j = 1
             if not sorted_list:
@@ -441,7 +434,3 @@ class TournamentManager:
                     del sorted_list[j - 1]
                 else:
                     j = j + 1
-
-    def get_list_of_all_tournament(self):
-        """Get the list of all the tournament"""
-        return self.tournament_list

@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from models.models import Progress, Tournament  # type:ignore
 import sys
 from tinydb import TinyDB
-import json
 
 
 class MenuManager:
@@ -97,11 +96,11 @@ class MainMenu(State):
 
         players_table = db.table("players")
         players_table.truncate()
-        all_players = self.player_manager.get_all_players()
+        all_players = self.player_manager.list_of_player
         for player in all_players:
             players_table.insert(player.__dict__)
 
-        all_tournament = self.tournament_manager.get_list_of_all_tournament()
+        all_tournament = self.tournament_manager.tournament_list
         tournament_to_tiny = {}
 
         for i, tournament in enumerate(all_tournament):
@@ -138,7 +137,7 @@ class TournamentMenu(State):
         """Display the tournament menu by calling the view"""
         self.view.clean_console()
         self.view.show_banner()
-        self.view.display_tournament_menu(self.tournament_manager.get_tournament())
+        self.view.display_tournament_menu(self.tournament_manager.get_tournament_name())
 
     def get_user_option(self) -> None:
         """Get the user options"""
@@ -154,11 +153,11 @@ class TournamentMenu(State):
         if user_option == "3":
             self.view.clean_console()
             self.view.show_banner()
-            if not self.tournament_manager.get_tournament():
+            if not self.tournament_manager.get_tournament_name():
                 self.view.display_no_tournament_selected()
                 self.view.press_enter_to_continue()
             elif (
-                self.tournament_manager.get_tournament_object().get_progression()
+                self.tournament_manager.get_tournament().progression
                 != Progress.FIRST_ROUND
             ):
                 self.view.tournament_playing_error()
@@ -172,7 +171,7 @@ class TournamentMenu(State):
         if user_option == "4":
             self.view.clean_console()
             self.view.show_banner()
-            if not self.tournament_manager.get_list_of_all_tournament():
+            if not self.tournament_manager.tournament_list:
                 self.view.no_tournament_error()
                 self.view.press_enter_to_continue()
             else:
@@ -249,7 +248,7 @@ class AddPlayerToTournament(State):
         self.view.clean_console()
         self.view.show_banner()
         self.view.display_add_player_to_tournament(
-            self.tournament_manager.get_tournament()
+            self.tournament_manager.get_tournament_name()
         )
 
     def get_user_option(self) -> None:
@@ -379,13 +378,13 @@ class ReportPlayers(State):
 
     def generate_report(self, method="alpha", list_of_player=None):
         if not list_of_player:
-            player_list = self.player_manager.get_all_players()
+            player_list = self.player_manager.list_of_player
         else:
             player_list = list_of_player
         if method == "alpha":
-            player_list.sort(key=lambda x: x.get_last_name())
+            player_list.sort(key=lambda x: x.last_name)
         elif method == "elo":
-            player_list.sort(key=lambda x: x.get_elo())
+            player_list.sort(key=lambda x: x.elo)
         self.view.display_list_of_player(player_list)
         self.view.press_enter_to_continue()
 
@@ -427,7 +426,7 @@ class ReportTournamentPlayer(State):
         # Ask for which tournament the report is needed
         tournament_asked = None
         player_in_asked_tournament = None
-        tournament_list = self.tournament_manager.get_list_of_all_tournament()
+        tournament_list = self.tournament_manager.tournament_list
         self.view.display_list_of_tournament(tournament_list)
         if tournament_list:
 
@@ -444,15 +443,15 @@ class ReportTournamentPlayer(State):
                 self.view.press_enter_to_continue()
 
         if isinstance(tournament_asked, Tournament):
-            self.player_in_asked_tournament = tournament_asked.get_list_of_player()
+            self.player_in_asked_tournament = tournament_asked.list_of_player
             self.view.display_all_player_report_options()
 
     def generate_report(self, method="alpha"):
         player_list = self.player_in_asked_tournament
         if method == "alpha":
-            player_list.sort(key=lambda x: x.get_last_name())
+            player_list.sort(key=lambda x: x.last_name)
         elif method == "elo":
-            player_list.sort(key=lambda x: x.get_elo())
+            player_list.sort(key=lambda x: x.elo)
         self.view.display_list_of_player(player_list)
         self.view.press_enter_to_continue()
 
@@ -508,7 +507,7 @@ class ReportTournamentsRounds(State):
         # Ask for which tournament the report is needed
         tournament_asked = None
         self.round_in_asked_tournament = None
-        tournament_list = self.tournament_manager.get_list_of_all_tournament()
+        tournament_list = self.tournament_manager.tournament_list
         self.view.display_list_of_tournament(tournament_list)
         if tournament_list:
 
@@ -525,7 +524,7 @@ class ReportTournamentsRounds(State):
                 self.view.press_enter_to_continue()
 
         if isinstance(tournament_asked, Tournament):
-            self.round_in_asked_tournament = tournament_asked.get_list_of_rounds()
+            self.round_in_asked_tournament = tournament_asked.list_of_rounds
             if self.round_in_asked_tournament:
                 self.view.display_rounds(self.round_in_asked_tournament)
                 self.view.press_enter_to_continue()
@@ -561,7 +560,7 @@ class ReportTournamentGames(State):
         # Ask for which tournament the report is needed
         tournament_asked = None
         match_in_asked_tournament = []
-        tournament_list = self.tournament_manager.get_list_of_all_tournament()
+        tournament_list = self.tournament_manager.tournament_list
         self.view.display_list_of_tournament(tournament_list)
         if tournament_list:
 
@@ -578,8 +577,8 @@ class ReportTournamentGames(State):
                 self.view.press_enter_to_continue()
 
         if isinstance(tournament_asked, Tournament):
-            for round in tournament_asked.get_list_of_rounds():
-                for match in round.get_list_of_match():
+            for round in tournament_asked.list_of_rounds:
+                for match in round.list_of_match:
                     match_in_asked_tournament.append(match)
             if match_in_asked_tournament:
                 self.view.display_matchs(match_in_asked_tournament)

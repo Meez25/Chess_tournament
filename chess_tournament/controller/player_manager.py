@@ -4,7 +4,7 @@ from models.models import Player  # type:ignore
 class PlayerManager:
     def __init__(self, view) -> None:
         self.view = view
-        self._list_of_player = []
+        self.list_of_player = []
 
         # Add test data
         test_data = [
@@ -25,7 +25,7 @@ class PlayerManager:
             sex = player[3]
             elo = int(player[4])
             player_object: Player = Player(last_name, first_name, birthday, sex, elo)
-            self._list_of_player.append(player_object)
+            self.list_of_player.append(player_object)
 
     def create_player(self):
         """Create a player"""
@@ -35,22 +35,18 @@ class PlayerManager:
         sex = self.get_player_sex()
         elo = self.get_player_elo()
         player = Player(last_name, first_name, birthday, sex, int(elo))
-        self._list_of_player.append(player)
+        self.list_of_player.append(player)
         self.view.press_enter_to_continue()
         self.view.clean_console()
         self.view.show_banner()
         return player
 
-    def get_all_players(self):
-        """return the list of all player"""
-        return self._list_of_player
-
     def display_all_players(self):
         """Display the list of all players"""
-        if not self._list_of_player:
+        if not self.list_of_player:
             self.view.display_no_existing_player()
         else:
-            self.view.display_list_of_player(self._list_of_player)
+            self.view.display_list_of_player(self.list_of_player)
         self.view.press_enter_to_continue()
         self.view.clean_console()
         self.view.show_banner()
@@ -116,40 +112,40 @@ class PlayerManager:
 
     def modify_player(self):
         """Modify a player"""
-        if not self.get_all_players():
+        if not self.list_of_player:
             self.view.display_no_player_in_database()
             self.view.press_enter_to_continue()
         else:
-            self.view.which_player_to_modify(self.get_all_players())
+            self.view.which_player_to_modify(self.list_of_player)
             player_to_modify = self.view.get_player_to_modify().strip()
             self.view.clean_console()
             self.view.show_banner()
             found = False
-            for player in self.get_all_players():
-                if int(player_to_modify) == player.get_id():
+            for player in self.list_of_player:
+                if int(player_to_modify) == player.id:
                     found = True
                     attribute_to_change = self.view.get_modify_element(player)
                     if attribute_to_change == "1":
-                        player.set_last_name(self.view.get_new_last_name())
+                        player.last_name = self.view.get_new_last_name()
                         self.view.player_modified()
                         self.view.press_enter_to_continue()
                     elif attribute_to_change == "2":
-                        player.set_first_name(self.view.get_new_first_name())
+                        player.first_name = self.view.get_new_first_name()
                         self.view.player_modified()
                         self.view.press_enter_to_continue()
                     elif attribute_to_change == "3":
-                        player.set_date_of_birth(self.view.get_new_birthday())
+                        player.date_of_birth = self.view.get_new_birthday()
                         self.view.player_modified()
                         self.view.press_enter_to_continue()
                     elif attribute_to_change == "4":
-                        player.set_sex(self.view.get_new_sex())
+                        player.sex = self.view.get_new_sex()
                         self.view.player_modified()
                         self.view.press_enter_to_continue()
                     elif attribute_to_change == "5":
                         new_elo = self.view.get_new_elo()
                         try:
                             new_elo_int = int(new_elo)
-                            player.set_elo(new_elo_int)
+                            player.elo = new_elo_int
                             self.view.player_modified()
                             self.view.press_enter_to_continue()
                         except ValueError:

@@ -159,11 +159,11 @@ class View:
         """Ask what attribute to modify on the player"""
         print(
             f"Que voulez-vous modifier ?\n\n"
-            f"          1 : Nom ({player.get_last_name()})\n"
-            f"          2 : Prénom ({player.get_first_name()})\n"
-            f"          3 : Date de naissance ({player.get_date_birthday()})\n"
-            f"          4 : Sexe ({player.get_sex()})\n"
-            f"          5 : Elo ({player.get_elo()})\n"
+            f"          1 : Nom ({player.last_name})\n"
+            f"          2 : Prénom ({player.first_name})\n"
+            f"          3 : Date de naissance ({player.date_birthday})\n"
+            f"          4 : Sexe ({player.sex})\n"
+            f"          5 : Elo ({player.elo})\n"
             f"          6 : Retour\n"
         )
         return input("Entrez votre choix : ")
@@ -261,9 +261,9 @@ class View:
         print("[Index] - Nom, Prénom, Elo, Sexe\n")
         for player in list_of_player:
             print(
-                f"[{player.get_id()}] - {player.get_last_name()}, "
-                f"{player.get_first_name()}, {player.get_elo()}, "
-                f"{player.get_sex()}\n"
+                f"[{player.id}] - {player.last_name}, "
+                f"{player.first_name}, {player.elo}, "
+                f"{player.sex}\n"
             )
 
     def which_player_to_modify(self, list_of_player):
@@ -272,9 +272,9 @@ class View:
         print("[Index] - Nom, Prénom, Elo, Sexe\n")
         for player in list_of_player:
             print(
-                f"[{player.get_id()}] - {player.get_last_name()}, "
-                f"{player.get_first_name()}, {player.get_elo()}, "
-                f"{player.get_sex()}\n"
+                f"[{player.id}] - {player.last_name}, "
+                f"{player.first_name}, {player.elo}, "
+                f"{player.sex}\n"
             )
 
     def player_modified(self):
@@ -285,9 +285,9 @@ class View:
         print("[Index] - Nom, Prénom, Elo, Sexe\n")
         for player in list_of_player:
             print(
-                f"[{player.get_id()}] - {player.get_last_name()}, "
-                f"{player.get_first_name()}, {player.get_elo()}, "
-                f"{player.get_sex()}"
+                f"[{player.id}] - {player.last_name}, "
+                f"{player.first_name}, {player.elo}, "
+                f"{player.sex}"
             )
         print("\n")
 
@@ -304,7 +304,7 @@ class View:
 
     def player_added_to_tournament(self, player):
         print(
-            f"Le joueur {player.get_last_name()} {player.get_first_name()} "
+            f"Le joueur {player.last_name} {player.first_name} "
             f"a été ajouté au tournoi."
         )
 
@@ -402,7 +402,7 @@ class View:
         print(
             (
                 "\n".join(
-                    f"Nom : {round.get_name()}, date de début : {self.format_date(round.get_start_date())}, date de fin : {self.format_date(round.get_end_date())}"
+                    f"Nom : {round.name}, date de début : {self.format_date(round.start_date)}, date de fin : {self.format_date(round.end_date)}"
                     for round in rounds
                 )
             )
