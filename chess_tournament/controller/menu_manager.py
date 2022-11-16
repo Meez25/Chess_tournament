@@ -80,7 +80,7 @@ class MainMenu(State):
             self.save_objects()
         elif user_option == "5":
             # Do the load
-            ...
+            self.load_objects()
         elif user_option == "6":
             self.go_back()
         self.view.clean_console()
@@ -91,6 +91,7 @@ class MainMenu(State):
         sys.exit()
 
     def save_objects(self):
+        """Save the players and tournament in a database"""
         # Serialize Players in a dict
         db = TinyDB("db.json")
 
@@ -113,6 +114,16 @@ class MainMenu(State):
         self.view.save_success()
         self.view.press_enter_to_continue()
         # Save the list
+
+    def load_objects(self):
+        """Load the players and the tournament in a database"""
+        db = TinyDB("db.json")
+        players_table = db.table("players")
+        tournaments_table = db.table("tournaments")
+
+        all_players_from_tiny = players_table.all()
+        all_tournaments_from_tiny = tournaments_table.all()
+        print("hey")
 
 
 class TournamentMenu(State):

@@ -1,4 +1,4 @@
-from models.models import Player, Tournament
+from models.models import Tournament, Player
 
 
 def test_handle_tournament() -> None:
@@ -23,3 +23,8 @@ def test_handle_tournament() -> None:
         player_object: Player = Player(last_name, first_name, birthday, sex, elo)
         list_of_player.append(player_object)
         tournament.add_player_in_list(player)
+    print("here")
+
+
+if __name__ == "__main__":
+    test_handle_tournament()
