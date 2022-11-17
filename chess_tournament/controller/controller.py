@@ -8,6 +8,13 @@ from models.models import Player, Tournament
 class Controller:
     def __init__(self, view) -> None:
         self.view = view
+
+    def get_menu_running(self):
+        while True:
+            self.menu_manager.print_menu()
+            self.menu_manager.get_user_option()
+
+    def setup(self):
         self.player_manager = PlayerManager(self.view)
         self.tournament_manager = TournamentManager(self.view, self.player_manager)
         self.menu_manager = MenuManager(
@@ -15,11 +22,6 @@ class Controller:
         )
         self.create_test_data()
         print("hey")
-
-    def get_menu_running(self):
-        while True:
-            self.menu_manager.print_menu()
-            self.menu_manager.get_user_option()
 
     def run(self):
         self.get_menu_running()
