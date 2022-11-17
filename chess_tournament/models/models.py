@@ -134,6 +134,18 @@ class Tournament:
             f"Description : {self.description}"
         )
 
+    def is_full(self) -> bool:
+        if len(self.list_of_players) == 8:
+            return True
+        else:
+            return False
+
+    def is_empty(self) -> bool:
+        if len(self.list_of_players) == 0:
+            return True
+        else:
+            return False
+
 
 class Progress(Enum):
     FIRST_ROUND = 0

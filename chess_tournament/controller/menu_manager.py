@@ -3,6 +3,7 @@ from models.models import Progress, Tournament  # type:ignore
 import sys
 from tinydb import TinyDB
 from view.view import TournamentManagerView
+from controller.tournament_manager import TournamentHandler
 
 
 class MenuManager:
@@ -151,6 +152,7 @@ class TournamentMenu(State):
             self.view.clean_console()
             self.view.show_banner()
             self.tournament_manager.handle_tournament()
+
         elif user_option == "7":
             self.go_back()
         self.view.clean_console()
@@ -177,7 +179,7 @@ class TournamentMenu(State):
             return True
 
     def check_if_tour_playing(self):
-        if self.tournament_manager.get_tournament().progression == Progress.FIRST_ROUND:
+        if self.tournament_manager.tournament.progression == Progress.FIRST_ROUND:
             return False
         else:
             return True

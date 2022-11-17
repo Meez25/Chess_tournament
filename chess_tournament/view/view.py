@@ -161,6 +161,18 @@ class TournamentManagerView:
                 f"{player.sex}\n"
             )
 
+    def show_banner(self):
+        """Display the banner in the console"""
+        print(
+            f"{Bcolors.OKBLUE}"
+            f"  _____                            _       _ _   __      _               \n"
+            f" |_   _|__  _   _ _ __ _ __   ___ (_)   __| ( ) /_/  ___| |__   ___  ___ \n"
+            f"   | |/ _ \| | | | '__| '_ \ / _ \| |  / _` |/ / _ \/ __| '_ \ / _ \/ __|\n"
+            f"   | | (_) | |_| | |  | | | | (_) | | | (_| | |  __/ (__| | | |  __/ (__ \n"
+            f"   |_|\___/ \__,_|_|  |_| |_|\___/|_|  \__,_|  \___|\___|_| |_|\___|\___|\n"
+            f"{Bcolors.ENDC}"
+        )
+
     def tournament_added_successfully(self):
         """Match added successfully"""
         print("\nTournoi ajouté avec succès !")
@@ -307,9 +319,42 @@ class TournamentManagerView:
         """Display no round error"""
         print("\nIl n'y a pas encore de matchs dans le tournoi.\n")
 
+    def display_rounds(self, rounds):
+        """Display the list of rounds"""
+        print("Voici la liste des tours :\n")
+        print(
+            (
+                "\n".join(
+                    f"Nom : {round.name}, date de début : {self.format_date(round.start_date)}, date de fin : {self.format_date(round.end_date)}"
+                    for round in rounds
+                )
+            )
+        )
+
+    def display_matchs(self, matchs):
+        """Display the list of matchs"""
+        print("Voici la liste des matchs :\n")
+        print(("\n".join(f"{match.get_result()}" for match in matchs)))
+
+    def display_no_player_in_database(self):
+        """There is no player in the database"""
+        print("Aucun joueur n'est ajouté.\nVeuillez ajouter des joueurs")
+
+    def player_already_in_tournament(self):
+        """Player already in tournament"""
+        print("\nLe joueur est déjà dans le tournoi.")
+
+
+class MenuView:
+    ...
+
 
 class View:
     """Handle the view role"""
+
+    def display_list_of_player(self, list_of_player):
+        for player in list_of_player:
+            print(player)
 
     def show_banner(self):
         """Display the banner in the console"""
@@ -322,19 +367,6 @@ class View:
             f"   |_|\___/ \__,_|_|  |_| |_|\___/|_|  \__,_|  \___|\___|_| |_|\___|\___|\n"
             f"{Bcolors.ENDC}"
         )
-
-    def ask_start_tournament(self, tournament_name):
-        """Ask if ready to start the tournament"""
-        ready = input(f"Prêt à démarrer le tournoi {tournament_name} ? o/n ")
-        return ready
-
-    def display_yes_or_no_error(self):
-        """Generic yes/no error"""
-        print("La réponse doit être 'o' ou 'n'")
-
-    def tournament_added_successfully(self):
-        """Match added successfully"""
-        print("\nTournoi ajouté avec succès !")
 
     def get_user_option(self):
         return input("Entrez votre choix : ")
@@ -403,10 +435,6 @@ class View:
         """Display no tournament error"""
         print("Aucun tournoi n'est sélectionné\nVeuillez sélectionner un tournoi.")
 
-    def display_no_player_in_database(self):
-        """There is no player in the database"""
-        print("Aucun joueur n'est ajouté.\nVeuillez ajouter des joueurs")
-
     def player_already_in_tournament(self):
         """Player already in tournament"""
         print("\nLe joueur est déjà dans le tournoi.")
@@ -454,11 +482,6 @@ class View:
                 )
             )
         )
-
-    def display_matchs(self, matchs):
-        """Display the list of matchs"""
-        print("Voici la liste des matchs :\n")
-        print(("\n".join(f"{match.get_result()}" for match in matchs)))
 
     def save_success(self):
         """Display success message on save db"""

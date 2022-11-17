@@ -57,6 +57,49 @@ class CreateTournament:
         return tournament_description
 
 
+class PlayerInsertor:
+    def __init__(self, view, list_of_all_player, tournament=None) -> None:
+        self.tournament = tournament
+        self.view = view
+        self.all_players = list_of_all_player
+
+    def add_player_to_tournament(self):
+        """Add a player to the current tournament"""
+        if not self.tournament.is_full():
+            self.tournament.add_player_in_list(CreatePlayer().create_player())
+        else:
+            self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
+            self.view.press_enter_to_continue()
+
+    def add_existing_player_to_tournament(self):
+        """Add an existing player to the current tournament"""
+        # If there is no player in the "database", send error message
+
+        if self.tournament.is_full():
+            self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
+            self.view.press_enter_to_continue()
+        else:
+            # Display the list of all players so the user can select
+            self.view.display_existing_player_to_add(self.all_players)
+
+            # Get the tournament import to avoid duplicates
+            list_of_tournament_player = self.tournament.list_of_players
+
+            # Get the choice of the user
+            player_index = self.view.get_index_of_player()
+            for player in self.all_players:
+                if player.id == int(player_index):
+                    # If the player is not already in the tournament
+                    # Add the player to tournament
+                    if player not in list_of_tournament_player:
+                        self.tournament.add_player_in_list(player)
+                        self.view.player_added_to_tournament(player)
+                        self.view.press_enter_to_continue()
+                    else:
+                        self.view.player_already_in_tournament()
+                        self.view.press_enter_to_continue()
+
+
 class TournamentManager:
     def __init__(self, view, player_manager) -> None:
         self.view = view
@@ -71,8 +114,26 @@ class TournamentManager:
         self.tournament_manager_view.tournament_added_successfully()
         self.tournament_manager_view.press_enter_to_continue()
 
-    def get_tournament(self):
-        return self.tournament
+    def add_existing_player_to_tournament(self):
+        if not self.player_manager.list_of_player:
+            self.tournament_manager_view.display_no_existing_player()
+            self.tournament_manager_view.press_enter_to_continue()
+        else:
+            player_insertor = PlayerInsertor(
+                self.tournament_manager_view,
+                self.player_manager.list_of_player,
+                self.tournament,
+            )
+            player_insertor.add_existing_player_to_tournament()
+
+    def add_player_to_tournament(self):
+        """Add a player to the current tournament"""
+        player_insertor = PlayerInsertor(
+            self.tournament_manager_view,
+            self.player_manager.list_of_player,
+            self.tournament,
+        )
+        player_insertor.add_player_to_tournament()
 
     def get_tournament_name(self):
         """Get the current tournament"""
@@ -80,57 +141,6 @@ class TournamentManager:
             return ""
         else:
             return self.tournament.name
-
-    def add_player_to_tournament(self):
-        """Add a player to the current tournament"""
-        if not self.check_if_tournament_full():
-            self.tournament.add_player_in_list(CreatePlayer().create_player())
-        else:
-            self.tournament_manager_view.enough_number_of_player(
-                self.tournament.NUMBER_OF_PLAYER
-            )
-            self.tournament_manager_view.press_enter_to_continue()
-
-    def check_if_tournament_full(self):
-        if len(self.tournament.list_of_players) < self.tournament.NUMBER_OF_PLAYER:
-            return False
-        else:
-            return True
-
-    def add_existing_player_to_tournament(self):
-        """Add an existing player to the current tournament"""
-        # If there is no player in the "database", send error message
-        if not self.player_manager.list_of_player:
-
-            self.tournament_manager_view.display_no_existing_player()
-            self.tournament_manager_view.press_enter_to_continue()
-        elif self.check_if_tournament_full():
-            self.tournament_manager_view.enough_number_of_player(
-                self.tournament.NUMBER_OF_PLAYER
-            )
-            self.tournament_manager_view.press_enter_to_continue()
-        else:
-            # Display the list of all players so the user can select
-            list_of_all_players = self.player_manager.list_of_player
-            self.tournament_manager_view.display_existing_player_to_add(
-                list_of_all_players
-            )
-
-            list_of_tournament_player = self.tournament.list_of_player
-
-            # Get the choice of the user
-            player_index = self.tournament_manager_view.get_index_of_player()
-            for player in list_of_all_players:
-                if player.id == int(player_index):
-                    # If the player is not already in the tournament
-                    # Add the player to tournament
-                    if player not in list_of_tournament_player:
-                        self.tournament.add_player_in_list(player)
-                        self.tournament_manager_view.player_added_to_tournament(player)
-                        self.tournament_manager_view.press_enter_to_continue()
-                    else:
-                        self.tournament_manager_view.player_already_in_tournament()
-                        self.tournament_manager_view.press_enter_to_continue()
 
     def change_selected_tournament(self):
         """Change the tournament currently selected"""
@@ -199,17 +209,10 @@ class TournamentManager:
             )
         self.tournament_manager_view.press_enter_to_continue()
 
-    def check_if_player_in_tournament(self):
-        """Check if there is a least a player in the tournament"""
-        if not self.tournament.list_of_players:
-            return False
-        else:
-            return True
-
     def remove_player_from_tournament(self):
         """Remove a player from the tournament"""
 
-        if not self.check_if_player_in_tournament():
+        if self.tournament.is_empty():
             # Check if there is at least a player to delete
             self.tournament_manager_view.display_no_player_in_tournament()
             self.tournament_manager_view.press_enter_to_continue()
@@ -232,73 +235,60 @@ class TournamentManager:
                     self.tournament_manager_view.player_not_found(player_to_delete)
                     self.tournament_manager_view.press_enter_to_continue()
 
-    def ask_exit_or_continue(self):
-        start_next_round = self.tournament_manager_view.ask_exit_or_continue()
-        if not start_next_round:
-            wants_to_continue = True
+    def check_if_tournament_selected(self):
+        if not self.tournament:
+            self.tournament_manager_view.display_no_tournament_selected()
+            self.tournament_manager_view.press_enter_to_continue()
+            return False
         else:
-            wants_to_continue = False
-        return wants_to_continue
+            return True
 
-    def do_first_round(self):
-        self.tournament.progression = Progress.FIRST_ROUND
-        self.create_first_round()
+    def handle_tournament(self):
+        if not self.check_if_tournament_selected():
+            return
+        if not self.tournament.is_full():
+            self.tournament_manager_view.display_need_x_number_of_player(
+                self.tournament.NUMBER_OF_PLAYER
+            )
+            self.tournament_manager_view.press_enter_to_continue()
+            return
+        if self.tournament.progression == Progress.TOURNAMENT_OVER:
+            self.tournament_manager_view.tournament_is_over()
+            self.tournament_manager_view.press_enter_to_continue()
+            return
 
-        # Display the matchs to play
-        self.show_nth_round(0)
+        tournament_handler = TournamentHandler(
+            self.tournament, self.tournament_manager_view
+        )
+        tournament_handler.handle_tournament()
 
-        # Ask for results
-        self.get_match_results(0)
-        self.tournament.progression = Progress.SECOND_ROUND
 
-    def do_a_round(self, n_round):
-        self.tournament.progression = Progress(n_round + 1)
-        # Create the upcoming matches
-        self.create_nth_round(n_round)
-        # Display the list of generated matches
-        self.show_nth_round(n_round)
-        # Ask for the results
-        self.get_match_results(n_round)
+class TournamentHandler:
+    def __init__(self, tournament, tournament_view) -> None:
+        self.tournament = tournament
+        self.tournament_manager_view = tournament_view
 
     def handle_tournament(self):
 
         """Start the tournament"""
-        if not self.tournament:
-            self.tournament_manager_view.display_no_tournament_selected()
-            self.tournament_manager_view.press_enter_to_continue()
-        else:
-            if (
-                not len(self.tournament.list_of_players)
-                == self.tournament.NUMBER_OF_PLAYER
-            ):
-                self.tournament_manager_view.display_need_x_number_of_player(
-                    self.tournament.NUMBER_OF_PLAYER
-                )
-                self.tournament_manager_view.press_enter_to_continue()
-            elif self.tournament.progression == Progress.TOURNAMENT_OVER:
-                self.tournament_manager_view.tournament_is_over()
-                self.tournament_manager_view.press_enter_to_continue()
-            else:
-                wants_to_continue = True
-                if self.tournament.progression == Progress.FIRST_ROUND:
-                    self.do_first_round()
+        wants_to_continue = True
+        if self.tournament.progression == Progress.FIRST_ROUND:
+            self.do_first_round()
+            wants_to_continue = self.ask_exit_or_continue()
+
+        for i in range(self.tournament.progression.value, 4):
+            if wants_to_continue:
+                self.do_a_round(i)
+                if self.tournament.progression.value < 4:
                     wants_to_continue = self.ask_exit_or_continue()
+            else:
+                break
 
-                for i in range(self.tournament.progression.value, 4):
-                    if wants_to_continue:
-                        self.do_a_round(i)
-                        if self.tournament.progression.value < 4:
-                            wants_to_continue = self.ask_exit_or_continue()
-                    else:
-                        break
-
-                    if self.tournament.progression == Progress.TOURNAMENT_OVER:
-                        # End of tournament
-                        ranking = self.sort_player()
-                        self.tournament_manager_view.display_ranking_end_of_tournament(
-                            ranking
-                        )
-                        self.tournament_manager_view.press_enter_to_continue()
+            if self.tournament.progression == Progress.TOURNAMENT_OVER:
+                # End of tournament
+                ranking = self.sort_player()
+                self.tournament_manager_view.display_ranking_end_of_tournament(ranking)
+                self.tournament_manager_view.press_enter_to_continue()
 
     def create_first_round(self):
         """Create the first round"""
@@ -426,3 +416,31 @@ class TournamentManager:
                     del sorted_list[j - 1]
                 else:
                     j = j + 1
+
+    def ask_exit_or_continue(self):
+        start_next_round = self.tournament_manager_view.ask_exit_or_continue()
+        if not start_next_round:
+            wants_to_continue = True
+        else:
+            wants_to_continue = False
+        return wants_to_continue
+
+    def do_first_round(self):
+        self.tournament.progression = Progress.FIRST_ROUND
+        self.create_first_round()
+
+        # Display the matchs to play
+        self.show_nth_round(0)
+
+        # Ask for results
+        self.get_match_results(0)
+        self.tournament.progression = Progress.SECOND_ROUND
+
+    def do_a_round(self, n_round):
+        self.tournament.progression = Progress(n_round + 1)
+        # Create the upcoming matches
+        self.create_nth_round(n_round)
+        # Display the list of generated matches
+        self.show_nth_round(n_round)
+        # Ask for the results
+        self.get_match_results(n_round)
