@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from models.models import Progress, Tournament  # type:ignore
 import sys
 from tinydb import TinyDB
+from view.view import TournamentManagerView
 
 
 class MenuManager:
@@ -9,9 +10,12 @@ class MenuManager:
 
     _state = None
 
-    def __init__(self, state) -> None:
-        self.transition_to(state)
-        self.view = state.view
+    def __init__(self, view, tournament_manager, player_manager) -> None:
+        self.tournament_manager = tournament_manager
+        self.player_manager = player_manager
+        self.view = view
+        self.state = MainMenu(self.view, self.tournament_manager, self.player_manager)
+        self.transition_to(self.state)
         self.view.clean_console()
         self.view.show_banner()
 
@@ -92,24 +96,7 @@ class MainMenu(State):
     def save_objects(self):
         """Save the players and tournament in a database"""
         # Serialize Players in a dict
-        db = TinyDB("db.json")
-
-        players_table = db.table("players")
-        players_table.truncate()
-        all_players = self.player_manager.list_of_player
-        for player in all_players:
-            players_table.insert(player.__dict__)
-
-        all_tournament = self.tournament_manager.tournament_list
-        tournament_to_tiny = {}
-
-        for i, tournament in enumerate(all_tournament):
-            tournament_to_tiny[i] = tournament.serialize()
-
-        tournaments_table = db.table("tournaments")
-        tournaments_table.truncate()
-        tournaments_table.insert(tournament_to_tiny)
-
+        SaveData(self.player_manager, self.tournament_manager).save()
         self.view.save_success()
         self.view.press_enter_to_continue()
         # Save the list
@@ -143,31 +130,11 @@ class TournamentMenu(State):
         """Get the user options"""
         user_option = self.view.get_user_option()
         if user_option == "1":
-            self.view.clean_console()
-            self.view.show_banner()
-            self.tournament_manager.create_tournament()
+            self.create_tournament()
         if user_option == "2":
-            self.view.clean_console()
-            self.view.show_banner()
-            self.tournament_manager.display_all_tournament()
+            self.display_all_tournament()
         if user_option == "3":
-            self.view.clean_console()
-            self.view.show_banner()
-            if not self.tournament_manager.get_tournament_name():
-                self.view.display_no_tournament_selected()
-                self.view.press_enter_to_continue()
-            elif (
-                self.tournament_manager.get_tournament().progression
-                != Progress.FIRST_ROUND
-            ):
-                self.view.tournament_playing_error()
-                self.view.press_enter_to_continue()
-            else:
-                self.menu_manager.transition_to(
-                    AddPlayerToTournament(
-                        self.view, self.tournament_manager, self.player_manager
-                    )
-                )
+            self.display_add_player_to_tournament_menu()
         if user_option == "4":
             self.view.clean_console()
             self.view.show_banner()
@@ -194,6 +161,45 @@ class TournamentMenu(State):
         self.menu_manager.transition_to(
             MainMenu(self.view, self.tournament_manager, self.player_manager)
         )
+
+    def create_tournament(self):
+        self.prepare_display()
+        self.tournament_manager.create_tournament()
+
+    def display_all_tournament(self):
+        self.prepare_display()
+        self.tournament_manager.display_all_tournament()
+
+    def check_if_selected_tour(self):
+        if not self.tournament_manager.get_tournament_name():
+            return False
+        else:
+            return True
+
+    def check_if_tour_playing(self):
+        if self.tournament_manager.get_tournament().progression == Progress.FIRST_ROUND:
+            return False
+        else:
+            return True
+
+    def display_add_player_to_tournament_menu(self):
+        self.prepare_display()
+        if not self.check_if_selected_tour():
+            self.view.display_no_tournament_selected()
+            self.view.press_enter_to_continue()
+        elif self.check_if_tour_playing():
+            self.view.tournament_playing_error()
+            self.view.press_enter_to_continue()
+        else:
+            self.menu_manager.transition_to(
+                AddPlayerToTournament(
+                    self.view, self.tournament_manager, self.player_manager
+                )
+            )
+
+    def prepare_display(self):
+        self.view.clean_console()
+        self.view.show_banner()
 
 
 class PlayerMenu(State):
@@ -245,8 +251,7 @@ class AddPlayerToTournament(State):
 
     def print_menu(self) -> None:
         """Display the menu to add a player"""
-        self.view.clean_console()
-        self.view.show_banner()
+        self.prepare_display()
         self.view.display_add_player_to_tournament(
             self.tournament_manager.get_tournament_name()
         )
@@ -255,24 +260,35 @@ class AddPlayerToTournament(State):
         """Get the user options"""
         user_option = self.view.get_user_option()
         if user_option == "1":
-            self.view.clean_console()
-            self.view.show_banner()
-            player = self.player_manager.create_player()
-            self.tournament_manager.add_player_to_tournament(player)
+            self.create_player()
         elif user_option == "2":
-            self.view.clean_console()
-            self.view.show_banner()
-            self.tournament_manager.add_existing_player_to_tournament()
+            self.add_player_to_tournament()
         elif user_option == "3":
-            self.view.clean_console()
-            self.view.show_banner()
-            self.tournament_manager.display_tournament_players()
+            self.display_tournament_players()
         elif user_option == "4":
-            self.view.clean_console()
-            self.view.show_banner()
-            self.tournament_manager.remove_player_from_tournament()
+            self.remove_player_from_tournament()
         elif user_option == "5":
             self.go_back()
+
+    def create_player(self):
+        self.prepare_display()
+        self.tournament_manager.add_player_to_tournament()
+
+    def add_player_to_tournament(self):
+        self.prepare_display()
+        self.tournament_manager.add_existing_player_to_tournament()
+
+    def display_tournament_players(self):
+        self.prepare_display()
+        self.tournament_manager.display_tournament_players()
+
+    def remove_player_from_tournament(self):
+        self.prepare_display()
+        self.tournament_manager.remove_player_from_tournament()
+
+    def prepare_display(self):
+        self.view.clean_console()
+        self.view.show_banner()
 
     def go_back(self) -> None:
         """Go back to previous menu"""
@@ -377,6 +393,7 @@ class ReportPlayers(State):
         )
 
     def generate_report(self, method="alpha", list_of_player=None):
+
         if not list_of_player:
             player_list = self.player_manager.list_of_player
         else:
@@ -487,6 +504,7 @@ class ReportTournamentsRounds(State):
         self.view = view
         self.player_manager = player_manager
         self.tournament_manager = tournament_manager
+        self.tournament_manager_view = TournamentManagerView()
 
     def print_menu(self) -> None:
         """Display the player menu by calling the view"""
@@ -508,29 +526,37 @@ class ReportTournamentsRounds(State):
         tournament_asked = None
         self.round_in_asked_tournament = None
         tournament_list = self.tournament_manager.tournament_list
-        self.view.display_list_of_tournament(tournament_list)
+        self.tournament_manager_view.display_list_of_tournament(tournament_list)
         if tournament_list:
 
-            tournament_to_select = self.view.get_tournament_to_select().strip()
+            tournament_to_select = (
+                self.tournament_manager_view.get_tournament_to_select().strip()
+            )
             found = 0
             for tournament in tournament_list:
                 if tournament.name.lower() == tournament_to_select.lower():
                     tournament_asked = tournament
-                    self.view.display_selected_tournament(tournament_to_select)
+                    self.tournament_manager_view.display_selected_tournament(
+                        tournament_to_select
+                    )
                     found = 1
                     break
             if not found:
-                self.view.tournament_selected_not_found(tournament_to_select)
-                self.view.press_enter_to_continue()
+                self.tournament_manager_view.tournament_selected_not_found(
+                    tournament_to_select
+                )
+                self.tournament_manager_view.press_enter_to_continue()
 
         if isinstance(tournament_asked, Tournament):
             self.round_in_asked_tournament = tournament_asked.list_of_rounds
             if self.round_in_asked_tournament:
-                self.view.display_rounds(self.round_in_asked_tournament)
-                self.view.press_enter_to_continue()
+                self.tournament_manager_view.display_rounds(
+                    self.round_in_asked_tournament
+                )
+                self.tournament_manager_view.press_enter_to_continue()
             else:
-                self.view.no_round()
-                self.view.press_enter_to_continue()
+                self.tournament_manager_view.no_round()
+                self.tournament_manager_view.press_enter_to_continue()
 
 
 class ReportTournamentGames(State):
@@ -540,6 +566,7 @@ class ReportTournamentGames(State):
         self.view = view
         self.player_manager = player_manager
         self.tournament_manager = tournament_manager
+        self.tournament_manager_view = TournamentManagerView()
 
     def print_menu(self) -> None:
         """Display the player menu by calling the view"""
@@ -561,34 +588,69 @@ class ReportTournamentGames(State):
         tournament_asked = None
         match_in_asked_tournament = []
         tournament_list = self.tournament_manager.tournament_list
-        self.view.display_list_of_tournament(tournament_list)
+        self.tournament_manager_view.display_list_of_tournament(tournament_list)
         if tournament_list:
 
-            tournament_to_select = self.view.get_tournament_to_select().strip()
+            tournament_to_select = (
+                self.tournament_manager_view.get_tournament_to_select().strip()
+            )
             found = 0
             for tournament in tournament_list:
                 if tournament.name.lower() == tournament_to_select.lower():
                     tournament_asked = tournament
-                    self.view.display_selected_tournament(tournament_to_select)
+                    self.tournament_manager_view.display_selected_tournament(
+                        tournament_to_select
+                    )
                     found = 1
                     break
             if not found:
-                self.view.tournament_selected_not_found(tournament_to_select)
-                self.view.press_enter_to_continue()
+                self.tournament_manager_view.tournament_selected_not_found(
+                    tournament_to_select
+                )
+                self.tournament_manager_view.press_enter_to_continue()
 
         if isinstance(tournament_asked, Tournament):
             for round in tournament_asked.list_of_rounds:
                 for match in round.list_of_match:
                     match_in_asked_tournament.append(match)
             if match_in_asked_tournament:
-                self.view.display_matchs(match_in_asked_tournament)
-                self.view.press_enter_to_continue()
+                self.tournament_manager_view.display_matchs(match_in_asked_tournament)
+                self.tournament_manager_view.press_enter_to_continue()
             else:
-                self.view.no_matchs()
-                self.view.press_enter_to_continue()
+                self.tournament_manager_view.no_matchs()
+                self.tournament_manager_view.press_enter_to_continue()
 
 
 def default(obj):
     if hasattr(obj, "to_json"):
         return obj.to_json()
     raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+
+
+class SaveData:
+    def __init__(self, player_manager, tournament_manager) -> None:
+        self.db = TinyDB("db.json")
+        self.player_manager = player_manager
+        self.tournament_manager = tournament_manager
+
+    def insert_player(self):
+        players_table = self.db.table("players")
+        players_table.truncate()
+        all_players = self.player_manager.list_of_player
+        for player in all_players:
+            players_table.insert(player.__dict__)
+
+    def insert_tournament(self):
+        all_tournament = self.tournament_manager.tournament_list
+        tournament_to_tiny = {}
+
+        for i, tournament in enumerate(all_tournament):
+            tournament_to_tiny[i] = tournament.serialize()
+
+        tournaments_table = self.db.table("tournaments")
+        tournaments_table.truncate()
+        tournaments_table.insert(tournament_to_tiny)
+
+    def save(self):
+        self.insert_player()
+        self.insert_tournament()

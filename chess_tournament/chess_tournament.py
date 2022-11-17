@@ -6,7 +6,6 @@ def main():
     """Start the main program"""
     view = View()
     program = Controller(view)
-    program.setup()
     program.run()
 
 
