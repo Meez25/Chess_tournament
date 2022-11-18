@@ -12,7 +12,7 @@ class Controller:
         self.menu_manager = MenuManager(
             self.view, self.tournament_manager, self.player_manager
         )
-        self.create_test_data()
+        # self.create_test_data()
         print("hey")
 
     def get_menu_running(self):

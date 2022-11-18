@@ -1,4 +1,4 @@
-from models.models import Match, Round, Tournament, Progress  # type:ignore
+from models.models import Match, Round, Tournament, Progress, Player  # type:ignore
 from controller.player_manager import CreatePlayer
 from view.view import CreateTournamentView, TournamentManagerView
 from datetime import datetime
@@ -107,6 +107,70 @@ class TournamentManager:
         self.tournament_list = []
         self.tournament = None
         self.tournament_manager_view = TournamentManagerView()
+
+    def clear_tournament(self):
+        self.tournament_list = []
+
+    def insert_tournament(
+        self,
+        name,
+        location,
+        date,
+        time_control,
+        description,
+        list_of_player,
+        list_of_round,
+        progression,
+    ):
+        """Insert tournament (used to restore the database)"""
+        # Create the tournament, then create the player,
+        # put them in the tournament, create the round, etc
+        tournament_to_add = Tournament(
+            name,
+            location,
+            date,
+            time_control,
+            description,
+        )
+        for round in list_of_round:
+            end_date = round["end_date"]
+            round_to_add = Round(round["name"], round["start_date"])
+            round_to_add.end_date = end_date
+            for match in round["list_of_match"]:
+
+                player1 = match["player1"]
+                last_name = (player1["last_name"],)
+                first_name = (player1["first_name"],)
+                birthday = (player1["date_of_birth"],)
+                sex = (player1["sex"],)
+                elo = (player1["elo"],)
+                id = player1["id"]
+                player1_to_add = Player(last_name, first_name, birthday, sex, elo, id)
+
+                player1_score = match["result"]["0"]["1"]
+
+                player2 = match["player2"]
+                last_name = (player2["last_name"],)
+                first_name = (player2["first_name"],)
+                birthday = (player2["date_of_birth"],)
+                sex = (player2["sex"],)
+                elo = (player2["elo"],)
+                id = player2["id"]
+                player2_to_add = Player(last_name, first_name, birthday, sex, elo, id)
+
+                player2_score = match["result"]["1"]["1"]
+
+                match_to_add = Match(player1_to_add, player2_to_add)
+                match_to_add.set_result(player1_to_add, player1_score)
+                match_to_add.set_result(player2_to_add, player2_score)
+
+                round_to_add.add_game(match_to_add)
+
+            tournament_to_add.add_round(round_to_add)
+            tournament_to_add.add_player_in_list(player1_to_add)
+            tournament_to_add.add_player_in_list(player2_to_add)
+
+        self.tournament_list.append(tournament_to_add)
 
     def create_tournament(self):
         tournament = CreateTournament().create_tournament()

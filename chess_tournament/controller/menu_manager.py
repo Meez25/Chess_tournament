@@ -1,3 +1,4 @@
+import json
 from abc import ABC, abstractmethod
 from models.models import Progress, Tournament  # type:ignore
 import sys
@@ -104,13 +105,13 @@ class MainMenu(State):
 
     def load_objects(self):
         """Load the players and the tournament in a database"""
-        db = TinyDB("db.json")
-        players_table = db.table("players")
-        tournaments_table = db.table("tournaments")
-
-        all_players_from_tiny = players_table.all()
-        all_tournaments_from_tiny = tournaments_table.all()
-        print("hey")
+        data_location = RestoreDataTinyDB()
+        restorer = RestoreData(
+            data_location, self.player_manager, self.tournament_manager
+        )
+        restorer.recreate_players()
+        restorer.recreate_tournament()
+        self.view.press_enter_to_continue()
 
 
 class TournamentMenu(State):
@@ -644,15 +645,90 @@ class SaveData:
 
     def insert_tournament(self):
         all_tournament = self.tournament_manager.tournament_list
-        tournament_to_tiny = {}
-
-        for i, tournament in enumerate(all_tournament):
-            tournament_to_tiny[i] = tournament.serialize()
 
         tournaments_table = self.db.table("tournaments")
         tournaments_table.truncate()
-        tournaments_table.insert(tournament_to_tiny)
+
+        for tournament in all_tournament:
+            tournaments_table.insert(tournament.serialize())
 
     def save(self):
         self.insert_player()
         self.insert_tournament()
+
+
+class DataRestorer(ABC):
+    @abstractmethod
+    def get_player(self):
+        """Get the player table from the storage"""
+
+    def get_tournament(self):
+        """Get the tournament table from the storage"""
+
+
+class RestoreDataTinyDB(DataRestorer):
+    def __init__(self) -> None:
+        self.db = TinyDB("db.json")
+        self.player_manager = None
+        self.tournament_manager = None
+
+    def get_player(self):
+        """Get the player table from the Tiny DB"""
+        players_table = self.db.table("players")
+
+        serialized_players = players_table.all()
+        return serialized_players
+
+    def get_tournament(self):
+        """Get the tournament table from the Tiny DB"""
+        print("Getting the tournament_db")
+        tournaments_table = self.db.table("tournaments")
+        for row in tournaments_table:
+            print(row)
+        serialized_tournaments = tournaments_table.all()
+
+        list_of_tournament = []
+        for item in tournaments_table:
+            list_of_tournament.append(item)
+
+        return list_of_tournament
+
+
+class RestoreData:
+    """This class recreate all objects from a dict"""
+
+    def __init__(self, r: DataRestorer, player_manager, tournament_manager) -> None:
+        self.data_restorer = r
+        self.serialized_players = self.data_restorer.get_player()
+        self.serialized_tournaments = self.data_restorer.get_tournament()
+        self.player_manager = player_manager
+        self.tournament_manager = tournament_manager
+
+    def recreate_players(self):
+        self.player_manager.reset_player_list()
+        for player in self.serialized_players:
+            self.player_manager.insert_player(
+                player["last_name"],
+                player["first_name"],
+                player["date_of_birth"],
+                player["sex"],
+                player["elo"],
+                player["id"],
+            )
+
+    def recreate_tournament(self):
+        self.tournament_manager.clear_tournament()
+        print(self.serialized_tournaments)
+        for tournament in self.serialized_tournaments:
+
+            self.tournament_manager.insert_tournament(
+                tournament["name"],
+                tournament["location"],
+                tournament["date"],
+                tournament["time_control"],
+                tournament["description"],
+                tournament["list_of_player"],
+                tournament["list_of_round"],
+                tournament["progression"],
+            )
+        print("check")

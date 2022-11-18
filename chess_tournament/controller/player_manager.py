@@ -107,6 +107,15 @@ class PlayerManager:
         self.view.clean_console()
         self.view.show_banner()
 
+    def insert_player(self, last_name, first_name, birthday, sex, elo, id):
+        """Insert player (used to restore the database)"""
+        self.list_of_player.append(
+            Player(last_name, first_name, birthday, sex, elo, id)
+        )
+
+    def reset_player_list(self):
+        self.list_of_player = []
+
 
 class ModifyPlayer:
     """Class dedicated to the modification of a player"""
