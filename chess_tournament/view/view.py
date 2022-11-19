@@ -344,6 +344,10 @@ class TournamentManagerView:
         """Player already in tournament"""
         print("\nLe joueur est déjà dans le tournoi.")
 
+    def display_no_tournament_selected(self):
+        """Display no tournament error"""
+        print("Aucun tournoi n'est sélectionné\nVeuillez sélectionner un tournoi.")
+
 
 class MenuView:
     ...
@@ -351,6 +355,13 @@ class MenuView:
 
 class View:
     """Handle the view role"""
+
+    def display_no_existing_player(self):
+        print("Il n'y a aucun joueur dans le système. Veuillez en ajouter.")
+
+    def display_no_tournament_selected(self):
+        """Display no tournament error"""
+        print("Aucun tournoi n'est sélectionné\nVeuillez sélectionner un tournoi.")
 
     def display_list_of_player(self, list_of_player):
         for player in list_of_player:
@@ -430,10 +441,6 @@ class View:
             "          4 : Supprimer un joueur du tournoi\n"
             "          5 : Retour\n"
         )
-
-    def display_no_tournament_selected(self):
-        """Display no tournament error"""
-        print("Aucun tournoi n'est sélectionné\nVeuillez sélectionner un tournoi.")
 
     def player_already_in_tournament(self):
         """Player already in tournament"""

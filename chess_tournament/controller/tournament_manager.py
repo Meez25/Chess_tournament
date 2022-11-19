@@ -169,6 +169,7 @@ class TournamentManager:
             tournament_to_add.add_round(round_to_add)
             tournament_to_add.add_player_in_list(player1_to_add)
             tournament_to_add.add_player_in_list(player2_to_add)
+            tournament_to_add.progression = Progress(progression)
 
         self.tournament_list.append(tournament_to_add)
 
