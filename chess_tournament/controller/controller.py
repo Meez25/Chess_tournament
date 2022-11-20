@@ -1,7 +1,9 @@
-from controller.menu_manager import MenuManager  # type:ignore
-from controller.tournament_manager import TournamentManager  # type:ignore
-from controller.player_manager import PlayerManager  # type:ignore
-from models.models import Player, Tournament
+from chess_tournament.controller.menu_manager import MenuManager  # type:ignore
+from chess_tournament.controller.tournament_manager import (
+    TournamentManager,
+)  # type:ignore
+from chess_tournament.controller.player_manager import PlayerManager  # type:ignore
+from chess_tournament.models.models import Player, Tournament
 
 
 class Controller:

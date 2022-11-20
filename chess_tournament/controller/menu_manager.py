@@ -1,10 +1,10 @@
-import json
-from abc import ABC, abstractmethod
-from models.models import Progress, Tournament  # type:ignore
 import sys
+from abc import ABC, abstractmethod
+
 from tinydb import TinyDB
-from view.view import TournamentManagerView
-from controller.tournament_manager import TournamentHandler
+
+from chess_tournament.models.models import Progress, Tournament  # type:ignore
+from chess_tournament.view.view import TournamentManagerView
 
 
 class MenuManager:

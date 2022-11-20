@@ -1,5 +1,5 @@
-from models.models import Player  # type:ignore
-from view.view import CreatePlayerView, ModifyPlayerView
+from chess_tournament.models.models import Player  # type:ignore
+from chess_tournament.view.view import CreatePlayerView, ModifyPlayerView
 
 
 class CreatePlayer:

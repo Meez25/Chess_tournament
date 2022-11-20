@@ -1,7 +1,14 @@
-from models.models import Match, Round, Tournament, Progress, Player  # type:ignore
-from controller.player_manager import CreatePlayer
-from view.view import CreateTournamentView, TournamentManagerView
 from datetime import datetime
+
+from chess_tournament.models.models import (
+    Match,
+    Round,
+    Tournament,
+    Progress,
+    Player,
+)  # type:ignore
+from chess_tournament.controller.player_manager import CreatePlayer
+from chess_tournament.view.view import CreateTournamentView, TournamentManagerView
 
 
 class CreateTournament:
