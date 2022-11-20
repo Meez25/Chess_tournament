@@ -118,6 +118,7 @@ class TournamentManager:
 
     def clear_tournament(self):
         self.tournament_list = []
+        self.tournament = None
 
     def insert_tournament(
         self,
@@ -141,28 +142,31 @@ class TournamentManager:
             description,
         )
         for round in list_of_round:
-            end_date = round["end_date"]
-            round_to_add = Round(round["name"], round["start_date"])
+            end_date_as_string = round["end_date"]
+            end_date = datetime.strptime(end_date_as_string, "%d/%m/%y %H:%M")
+            start_date_as_string = round["start_date"]
+            start_date = datetime.strptime(start_date_as_string, "%d/%m/%y %H:%M")
+            round_to_add = Round(round["name"], start_date)
             round_to_add.end_date = end_date
             for match in round["list_of_match"]:
 
                 player1 = match["player1"]
-                last_name = (player1["last_name"],)
-                first_name = (player1["first_name"],)
-                birthday = (player1["date_of_birth"],)
-                sex = (player1["sex"],)
-                elo = (player1["elo"],)
+                last_name = player1["last_name"]
+                first_name = player1["first_name"]
+                birthday = player1["date_of_birth"]
+                sex = player1["sex"]
+                elo = player1["elo"]
                 id = player1["id"]
                 player1_to_add = Player(last_name, first_name, birthday, sex, elo, id)
 
                 player1_score = match["result"]["0"]["1"]
 
                 player2 = match["player2"]
-                last_name = (player2["last_name"],)
-                first_name = (player2["first_name"],)
-                birthday = (player2["date_of_birth"],)
-                sex = (player2["sex"],)
-                elo = (player2["elo"],)
+                last_name = player2["last_name"]
+                first_name = player2["first_name"]
+                birthday = player2["date_of_birth"]
+                sex = player2["sex"]
+                elo = player2["elo"]
                 id = player2["id"]
                 player2_to_add = Player(last_name, first_name, birthday, sex, elo, id)
 
@@ -175,9 +179,11 @@ class TournamentManager:
                 round_to_add.add_game(match_to_add)
 
             tournament_to_add.add_round(round_to_add)
-            tournament_to_add.progression = Progress(progression)
+
+        tournament_to_add.progression = Progress(progression)
 
         self.tournament_list.append(tournament_to_add)
+        self.tournament = tournament_to_add
 
         for player in list_of_player:
             player_to_add = Player(
@@ -193,7 +199,6 @@ class TournamentManager:
     def create_tournament(self):
         tournament = CreateTournament().create_tournament()
         self.tournament_list.append(tournament)
-        self.tournament = tournament
         self.tournament_manager_view.tournament_added_successfully()
         self.tournament_manager_view.press_enter_to_continue()
 

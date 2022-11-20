@@ -111,6 +111,7 @@ class MainMenu(State):
         )
         restorer.recreate_players()
         restorer.recreate_tournament()
+        self.view.restore_success()
         self.view.press_enter_to_continue()
 
 

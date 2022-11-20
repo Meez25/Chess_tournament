@@ -133,7 +133,7 @@ class TournamentManagerView(View):
     def display_matchs(self, matchs):
         """Display the list of matchs"""
         print("Voici la liste des matchs :\n")
-        print(("\n".join(f"{match.get_result()}" for match in matchs)))
+        print("\n".join(f"{match.get_result()}" for match in matchs))
 
     def display_no_player_in_database(self):
         """There is no player in the database"""
