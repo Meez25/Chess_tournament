@@ -1,10 +1,10 @@
 import sys
 from abc import ABC, abstractmethod
 
-from tinydb import TinyDB
 
 from chess_tournament.models.models import Progress, Tournament  # type:ignore
-from chess_tournament.view.view import TournamentManagerView
+from chess_tournament.view.tournament_manager_view import TournamentManagerView
+from chess_tournament.controller.data_manager import *
 
 
 class MenuManager:
@@ -463,7 +463,7 @@ class ReportTournamentPlayer(State):
                 self.view.press_enter_to_continue()
 
         if isinstance(tournament_asked, Tournament):
-            self.player_in_asked_tournament = tournament_asked.list_of_player
+            self.player_in_asked_tournament = tournament_asked.list_of_players
             self.view.display_all_player_report_options()
 
     def generate_report(self, method="alpha"):
@@ -622,113 +622,3 @@ class ReportTournamentGames(State):
             else:
                 self.tournament_manager_view.no_matchs()
                 self.tournament_manager_view.press_enter_to_continue()
-
-
-def default(obj):
-    if hasattr(obj, "to_json"):
-        return obj.to_json()
-    raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
-
-
-class SaveData:
-    def __init__(self, player_manager, tournament_manager) -> None:
-        self.db = TinyDB("db.json")
-        self.player_manager = player_manager
-        self.tournament_manager = tournament_manager
-
-    def insert_player(self):
-        players_table = self.db.table("players")
-        players_table.truncate()
-        all_players = self.player_manager.list_of_player
-        for player in all_players:
-            players_table.insert(player.__dict__)
-
-    def insert_tournament(self):
-        all_tournament = self.tournament_manager.tournament_list
-
-        tournaments_table = self.db.table("tournaments")
-        tournaments_table.truncate()
-
-        for tournament in all_tournament:
-            tournaments_table.insert(tournament.serialize())
-
-    def save(self):
-        self.insert_player()
-        self.insert_tournament()
-
-
-class DataRestorer(ABC):
-    @abstractmethod
-    def get_player(self):
-        """Get the player table from the storage"""
-
-    def get_tournament(self):
-        """Get the tournament table from the storage"""
-
-
-class RestoreDataTinyDB(DataRestorer):
-    def __init__(self) -> None:
-        self.db = TinyDB("db.json")
-        self.player_manager = None
-        self.tournament_manager = None
-
-    def get_player(self):
-        """Get the player table from the Tiny DB"""
-        players_table = self.db.table("players")
-
-        serialized_players = players_table.all()
-        return serialized_players
-
-    def get_tournament(self):
-        """Get the tournament table from the Tiny DB"""
-        print("Getting the tournament_db")
-        tournaments_table = self.db.table("tournaments")
-        for row in tournaments_table:
-            print(row)
-        serialized_tournaments = tournaments_table.all()
-
-        list_of_tournament = []
-        for item in tournaments_table:
-            list_of_tournament.append(item)
-
-        return list_of_tournament
-
-
-class RestoreData:
-    """This class recreate all objects from a dict"""
-
-    def __init__(self, r: DataRestorer, player_manager, tournament_manager) -> None:
-        self.data_restorer = r
-        self.serialized_players = self.data_restorer.get_player()
-        self.serialized_tournaments = self.data_restorer.get_tournament()
-        self.player_manager = player_manager
-        self.tournament_manager = tournament_manager
-
-    def recreate_players(self):
-        self.player_manager.reset_player_list()
-        for player in self.serialized_players:
-            self.player_manager.insert_player(
-                player["last_name"],
-                player["first_name"],
-                player["date_of_birth"],
-                player["sex"],
-                player["elo"],
-                player["id"],
-            )
-
-    def recreate_tournament(self):
-        self.tournament_manager.clear_tournament()
-        print(self.serialized_tournaments)
-        for tournament in self.serialized_tournaments:
-
-            self.tournament_manager.insert_tournament(
-                tournament["name"],
-                tournament["location"],
-                tournament["date"],
-                tournament["time_control"],
-                tournament["description"],
-                tournament["list_of_player"],
-                tournament["list_of_round"],
-                tournament["progression"],
-            )
-        print("check")

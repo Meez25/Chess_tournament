@@ -1,10 +1,10 @@
 from chess_tournament.controller.controller import Controller
-from chess_tournament.view.view import View  # type:ignore
+from chess_tournament.view.menu_view import MenuView  # type:ignore
 
 
 def main():
     """Start the main program"""
-    view = View()
+    view = MenuView()
     program = Controller(view)
     program.run()
 

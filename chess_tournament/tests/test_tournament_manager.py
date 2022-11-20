@@ -23,7 +23,7 @@ def test_handle_tournament() -> None:
         player_object: Player = Player(last_name, first_name, birthday, sex, elo)
         list_of_player.append(player_object)
         tournament.add_player_in_list(player)
-    print("here")
+    print("Unit testing")
 
 
 if __name__ == "__main__":

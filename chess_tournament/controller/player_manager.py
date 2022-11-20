@@ -1,5 +1,6 @@
 from chess_tournament.models.models import Player  # type:ignore
-from chess_tournament.view.view import CreatePlayerView, ModifyPlayerView
+from chess_tournament.view.create_player_view import CreatePlayerView
+from chess_tournament.view.modify_player_view import ModifyPlayerView
 
 
 class CreatePlayer:
@@ -74,7 +75,7 @@ class CreatePlayer:
             elif not elo.isdigit():
                 self.create_player_view.display_elo_not_number_error()
             else:
-                print("Erreur dans get_player_elo")
+                raise Exception("Error in get_player_elo in CreatePlayer Class")
 
 
 class PlayerManager:

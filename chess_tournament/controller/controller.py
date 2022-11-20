@@ -15,7 +15,6 @@ class Controller:
             self.view, self.tournament_manager, self.player_manager
         )
         # self.create_test_data()
-        print("hey")
 
     def get_menu_running(self):
         while True:

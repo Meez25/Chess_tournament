@@ -8,7 +8,8 @@ from chess_tournament.models.models import (
     Player,
 )  # type:ignore
 from chess_tournament.controller.player_manager import CreatePlayer
-from chess_tournament.view.view import CreateTournamentView, TournamentManagerView
+from chess_tournament.view.tournament_manager_view import TournamentManagerView
+from chess_tournament.view.create_tournament_view import CreateTournamentView
 
 
 class CreateTournament:
@@ -174,15 +175,25 @@ class TournamentManager:
                 round_to_add.add_game(match_to_add)
 
             tournament_to_add.add_round(round_to_add)
-            tournament_to_add.add_player_in_list(player1_to_add)
-            tournament_to_add.add_player_in_list(player2_to_add)
             tournament_to_add.progression = Progress(progression)
 
         self.tournament_list.append(tournament_to_add)
 
+        for player in list_of_player:
+            player_to_add = Player(
+                player["last_name"],
+                player["first_name"],
+                player["date_of_birth"],
+                player["sex"],
+                player["elo"],
+                player["id"],
+            )
+            tournament_to_add.add_player_in_list(player_to_add)
+
     def create_tournament(self):
         tournament = CreateTournament().create_tournament()
         self.tournament_list.append(tournament)
+        self.tournament = tournament
         self.tournament_manager_view.tournament_added_successfully()
         self.tournament_manager_view.press_enter_to_continue()
 
