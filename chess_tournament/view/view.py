@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
-
-from chess_tournament.view.bcolors import Bcolors
+from chess_tournament.view import ascii
 
 
 class View:
@@ -13,6 +12,9 @@ class View:
         print("")
         tournament_to_select = input("Nom du tournoi à sélectionner : ")
         return tournament_to_select
+
+    def show_banner(self):
+        ascii.show_banner()
 
     def display_list_of_tournament(self, list_of_tournament):
         """Display the list of all tournament"""
@@ -33,18 +35,6 @@ class View:
     def display_list_of_player(self, list_of_player):
         for player in list_of_player:
             print(player)
-
-    def show_banner(self):
-        """Display the banner in the console"""
-        print(
-            f"{Bcolors.OKBLUE}"
-            f"  _____                            _       _ _   __      _               \n"
-            f" |_   _|__  _   _ _ __ _ __   ___ (_)   __| ( ) /_/  ___| |__   ___  ___ \n"
-            f"   | |/ _ \| | | | '__| '_ \ / _ \| |  / _` |/ / _ \/ __| '_ \ / _ \/ __|\n"
-            f"   | | (_) | |_| | |  | | | | (_) | | | (_| | |  __/ (__| | | |  __/ (__ \n"
-            f"   |_|\___/ \__,_|_|  |_| |_|\___/|_|  \__,_|  \___|\___|_| |_|\___|\___|\n"
-            f"{Bcolors.ENDC}"
-        )
 
     def press_enter_to_continue(self):
         input("\nAppuyez sur Entrée pour continuer...\n")

@@ -4,3 +4,4 @@ __pycache__/
 flake-report
 /.vscode
 *.json
+*.flake8
