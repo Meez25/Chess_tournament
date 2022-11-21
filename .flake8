@@ -1,3 +1,0 @@
-[flake8]
-max-line-length = 119
-per-file-ignores = ascii.py:W605
