@@ -482,7 +482,6 @@ class ReportTournamentPlayer(State):
             self.view.display_all_player_report_options()
 
     def generate_report(self, method="alpha"):
-        """Sort the player by alphabetical order or elo"""
         player_list = self.player_in_asked_tournament
         if method == "alpha":
             player_list.sort(key=lambda x: x.last_name)

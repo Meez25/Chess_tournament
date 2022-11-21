@@ -32,6 +32,10 @@ class Match:
         """Get the result of the game"""
         return self.result
 
+    def get_result_formatted(self):
+        """Get the result as a nice f-string"""
+        return f"{self.result[0][0].last_name} contre {self.result[1][0].last_name} : {self.result[0][1]} - {self.result[1][1]}"
+
     def __str__(self):
         return f"{self.player1.last_name} contre {self.player2.last_name}"
 
@@ -128,11 +132,11 @@ class Tournament:
 
     def __str__(self) -> str:
         return (
-            f"Nom du tournoi : {self.name}\n"
-            f"Lieu : {self.location}\n"
-            f"Date : {self.date}\n"
-            f"Contrôle du temps : {self.time_control}\n"
-            f"Description : {self.description}"
+            f"  Nom du tournoi : {self.name}\n"
+            f"  Lieu : {self.location}\n"
+            f"  Date : {self.date}\n"
+            f"  Contrôle du temps : {self.time_control}\n"
+            f"  Description : {self.description}"
         )
 
     def is_full(self) -> bool:
@@ -146,6 +150,22 @@ class Tournament:
             return True
         else:
             return False
+
+    def sort_player(self):
+        """Get the result of the previous rounds per player and make a sorted list"""
+        previous_round = []
+        for player in self.list_of_players:
+            player_point = 0
+            for round in self.list_of_rounds:
+                for match in round.list_of_match:
+                    match_result = match.get_result()
+                    if player == match_result[0][0]:
+                        player_point = player_point + match_result[0][1]
+                    elif player == match_result[1][0]:
+                        player_point = player_point + match_result[1][1]
+            previous_round.append([player, player_point])
+        previous_round.sort(key=lambda x: (x[1], x[0].elo), reverse=True)
+        return previous_round
 
 
 class Progress(Enum):

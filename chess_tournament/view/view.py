@@ -25,7 +25,8 @@ class View:
             print("           La liste est vide")
         else:
             for tournament in list_of_tournament:
-                print(f"          - {tournament.name}")
+                print(f"{tournament}")
+                print()
 
     def display_no_existing_player(self):
         print("Il n'y a aucun joueur dans le système. Veuillez en ajouter.")

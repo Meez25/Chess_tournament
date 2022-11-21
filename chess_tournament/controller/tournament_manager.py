@@ -97,19 +97,32 @@ class PlayerInsertor:
             # Get the tournament import to avoid duplicates
             list_of_tournament_player = self.tournament.list_of_players
 
-            # Get the choice of the user
-            player_index = self.view.get_index_of_player()
-            for player in self.all_players:
-                if player.id == int(player_index):
-                    # If the player is not already in the tournament
-                    # Add the player to tournament
-                    if player not in list_of_tournament_player:
-                        self.tournament.add_player_in_list(player)
-                        self.view.player_added_to_tournament(player)
+            finished_to_add_player = False
+            while not finished_to_add_player:
+                # Get the choice of the user
+                if self.tournament.is_full():
+                    self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
+                    self.view.press_enter_to_continue()
+                    return
+                player_index = self.view.get_index_of_player()
+                for player in self.all_players:
+                    if not player_index.isdigit():
+                        self.view.must_be_a_number()
                         self.view.press_enter_to_continue()
-                    else:
-                        self.view.player_already_in_tournament()
-                        self.view.press_enter_to_continue()
+                        return
+                    if player.id == int(player_index):
+                        # If the player is not already in the tournament
+                        # Add the player to tournament
+                        if player not in list_of_tournament_player:
+                            self.tournament.add_player_in_list(player)
+                            self.view.player_added_to_tournament(player)
+                            user_reply = self.view.finished_adding_player()
+                            if user_reply.lower() == "q":
+                                finished_to_add_player = True
+
+                        else:
+                            self.view.player_already_in_tournament()
+                            self.view.press_enter_to_continue()
 
 
 class TournamentManager:
@@ -319,16 +332,22 @@ class TournamentManager:
             player_to_delete = (
                 self.tournament_manager_view.get_player_to_delete_from_tournament().strip()
             )
+            if not player_to_delete.isdigit():
+                self.tournament_manager.view.must_be_a_numer()
+                self.tournament_manager_view.press_enter_to_continue()
+                return
+            found = False
             for player in self.tournament.list_of_players:
                 if int(player_to_delete) == player.id:
+                    found = True
                     self.tournament.remove_player_in_list(player)
                     self.tournament_manager_view.player_removed_from_tournament(
                         int(player_to_delete)
                     )
                     self.tournament_manager_view.press_enter_to_continue()
-                else:
-                    self.tournament_manager_view.player_not_found(player_to_delete)
-                    self.tournament_manager_view.press_enter_to_continue()
+            if not found:
+                self.tournament_manager_view.player_not_found(player_to_delete)
+                self.tournament_manager_view.press_enter_to_continue()
 
     def check_if_tournament_selected(self):
         """Check if a tournament is selected"""
@@ -351,6 +370,9 @@ class TournamentManager:
             return
         if self.tournament.progression == Progress.TOURNAMENT_OVER:
             self.tournament_manager_view.tournament_is_over()
+
+            ranking = self.tournament.sort_player()
+            self.tournament_manager_view.display_ranking_end_of_tournament(ranking)
             self.tournament_manager_view.press_enter_to_continue()
             return
 
@@ -385,7 +407,7 @@ class TournamentHandler:
 
             if self.tournament.progression == Progress.TOURNAMENT_OVER:
                 # End of tournament
-                ranking = self.sort_player()
+                ranking = self.tournament.sort_player()
                 self.tournament_manager_view.display_ranking_end_of_tournament(ranking)
                 self.tournament_manager_view.press_enter_to_continue()
 
@@ -463,22 +485,6 @@ class TournamentHandler:
                     else:
                         self.tournament_manager_view.display_score_error()
 
-    def sort_player(self):
-        """Get the result of the previous rounds per player and make a sorted list"""
-        previous_round = []
-        for player in self.tournament.list_of_players:
-            player_point = 0
-            for round in self.tournament.list_of_rounds:
-                for match in round.list_of_match:
-                    match_result = match.get_result()
-                    if player == match_result[0][0]:
-                        player_point = player_point + match_result[0][1]
-                    elif player == match_result[1][0]:
-                        player_point = player_point + match_result[1][1]
-            previous_round.append([player, player_point])
-        previous_round.sort(key=lambda x: (x[1], x[0].elo), reverse=True)
-        return previous_round
-
     def get_list_already_played(self, player):
         """Returns a list of player and their already played opponents"""
         played_played = []
@@ -498,7 +504,7 @@ class TournamentHandler:
         self.tournament.add_round(round)
 
         # Sort player by Elo
-        sorted_list = self.sort_player()
+        sorted_list = self.tournament.sort_player()
 
         # Create 4 matches for the nth round
         for _ in range(int(self.tournament.NUMBER_OF_PLAYER / 2)):

@@ -28,7 +28,7 @@ First you need the virtual environment :
 
 To download all the library, you can do this command :
 
-pip install -r requirements.txt
+`pip install -r requirements.txt`
 
 This will install all the dependancies necessary to run this script.
 

@@ -133,8 +133,16 @@ class TournamentManagerView(View):
     def display_matchs(self, matchs):
         """Display the list of matchs"""
         print("Voici la liste des matchs :\n")
-        print("\n".join(f"{match.get_result()}" for match in matchs))
+        print("\n".join(f"{match.get_result_formatted()}" for match in matchs))
 
     def display_no_player_in_database(self):
         """There is no player in the database"""
         print("Aucun joueur n'est ajouté.\nVeuillez ajouter des joueurs")
+
+    def finished_adding_player(self):
+        """Ask if the user is done adding player"""
+        return input("Entrée pour continuer, q pour quitter")
+
+    def must_be_a_number(self):
+        """Error, the input must be a number"""
+        print("Veuillez entrer un chiffre")
