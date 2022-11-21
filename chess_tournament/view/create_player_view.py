@@ -2,6 +2,8 @@ from chess_tournament.view.view import View
 
 
 class CreatePlayerView(View):
+    """Class that handle the player creation view"""
+
     def ask_player_last_name(self):
         """Ask for the player's name"""
         last_name = input("Nom de famille ? : ")

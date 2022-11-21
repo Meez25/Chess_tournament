@@ -2,7 +2,7 @@ from chess_tournament.view.view import View
 
 
 class MenuView(View):
-    """Handle the view role"""
+    """Class that handle the menus"""
 
     def get_user_option(self):
         return input("Entrez votre choix : ")

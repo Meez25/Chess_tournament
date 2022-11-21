@@ -13,6 +13,8 @@ from chess_tournament.view.create_tournament_view import CreateTournamentView
 
 
 class CreateTournament:
+    """Class that create the tournament"""
+
     def __init__(self) -> None:
         self.modify_player_view = CreateTournamentView()
 
@@ -66,6 +68,8 @@ class CreateTournament:
 
 
 class PlayerInsertor:
+    """Class to add a player in a tournament or add an existing player"""
+
     def __init__(self, view, list_of_all_player, tournament=None) -> None:
         self.tournament = tournament
         self.view = view
@@ -109,6 +113,8 @@ class PlayerInsertor:
 
 
 class TournamentManager:
+    """Class that manager the tournament"""
+
     def __init__(self, view, player_manager) -> None:
         self.view = view
         self.player_manager = player_manager
@@ -203,6 +209,7 @@ class TournamentManager:
         self.tournament_manager_view.press_enter_to_continue()
 
     def add_existing_player_to_tournament(self):
+        """Add an existing player to the tournament"""
         if not self.player_manager.list_of_player:
             self.tournament_manager_view.display_no_existing_player()
             self.tournament_manager_view.press_enter_to_continue()
@@ -324,6 +331,7 @@ class TournamentManager:
                     self.tournament_manager_view.press_enter_to_continue()
 
     def check_if_tournament_selected(self):
+        """Check if a tournament is selected"""
         if not self.tournament:
             self.tournament_manager_view.display_no_tournament_selected()
             self.tournament_manager_view.press_enter_to_continue()
@@ -332,6 +340,7 @@ class TournamentManager:
             return True
 
     def handle_tournament(self):
+        """Function that handle the tournament (round, etc)"""
         if not self.check_if_tournament_selected():
             return
         if not self.tournament.is_full():
@@ -352,6 +361,8 @@ class TournamentManager:
 
 
 class TournamentHandler:
+    """Class that handle the tournament"""
+
     def __init__(self, tournament, tournament_view) -> None:
         self.tournament = tournament
         self.tournament_manager_view = tournament_view
@@ -482,7 +493,7 @@ class TournamentHandler:
         return played_played
 
     def create_nth_round(self, nround):
-        # Create first round
+        """Create the nth round"""
         round = Round(f"Round {nround+1}", datetime.now())
         self.tournament.add_round(round)
 
@@ -506,6 +517,7 @@ class TournamentHandler:
                     j = j + 1
 
     def ask_exit_or_continue(self):
+        """Check if the user wants to continue"""
         start_next_round = self.tournament_manager_view.ask_exit_or_continue()
         if not start_next_round:
             wants_to_continue = True
@@ -514,6 +526,7 @@ class TournamentHandler:
         return wants_to_continue
 
     def do_first_round(self):
+        """Do the first round"""
         self.tournament.progression = Progress.FIRST_ROUND
         self.create_first_round()
 
@@ -525,6 +538,7 @@ class TournamentHandler:
         self.tournament.progression = Progress.SECOND_ROUND
 
     def do_a_round(self, n_round):
+        """Do next rounds"""
         self.tournament.progression = Progress(n_round + 1)
         # Create the upcoming matches
         self.create_nth_round(n_round)

@@ -2,6 +2,8 @@ from chess_tournament.view.view import View
 
 
 class TournamentManagerView(View):
+    """Class for the play of the tournament actions"""
+
     def which_player_to_delete(self, list_of_player):
         """Ask which player to delete"""
         print("Quel joueur voulez-vous supprimer ?\n")

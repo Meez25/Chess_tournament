@@ -17,15 +17,17 @@ class Controller:
         # self.create_test_data()
 
     def get_menu_running(self):
+        """While loop that managed the menu"""
         while True:
             self.menu_manager.print_menu()
             self.menu_manager.get_user_option()
 
     def run(self):
+        """Run the menu"""
         self.get_menu_running()
 
     def create_test_data(self):
-        # Add test data
+        """Added test data for test purpose"""
         test_data = [
             ["last_name_1", "first_name_1", "birthday_1", "sex_1", "100"],
             ["last_name_2", "first_name_2", "birthday_2", "sex_2", "200"],

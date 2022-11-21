@@ -10,6 +10,7 @@ class CreatePlayer:
         self.create_player_view = CreatePlayerView()
 
     def create_player(self):
+        """Function to create a player (ask the user some information)"""
         last_name = self.get_player_last_name()
         first_name = self.get_player_first_name()
         birthday = self.get_player_birthday()
@@ -95,6 +96,7 @@ class PlayerManager:
         return player
 
     def modify_player(self):
+        """Modify a player"""
         modify_player = ModifyPlayer(self.list_of_player)
         modify_player.modify_player()
 
@@ -138,6 +140,7 @@ class ModifyPlayer:
         self.get_attribute_to_change(player_to_modify)
 
     def check_if_player(self):
+        """Check if there is at least a player"""
         if not self.list_of_player:
             self.modify_player_view.display_no_player_in_database()
             self.modify_player_view.press_enter_to_continue()
@@ -146,6 +149,7 @@ class ModifyPlayer:
             return True
 
     def get_player_to_change(self):
+        """Ask which player to change"""
         # Ask what is the player to change
         self.modify_player_view.which_player_to_modify(self.list_of_player)
         player_to_modify = self.modify_player_view.get_player_to_modify().strip()
@@ -154,6 +158,7 @@ class ModifyPlayer:
         return player_to_modify
 
     def check_if_player_exist(self, asked_player):
+        """Check if the player chosen by the user exist"""
         # Check if the number entered by the user match a real player
         for player in self.list_of_player:
             if int(asked_player) == player.id:
@@ -162,6 +167,7 @@ class ModifyPlayer:
         return False
 
     def get_attribute_to_change(self, player):
+        """Ask what to change about the player"""
         attribute_to_change = self.modify_player_view.get_modify_element(player)
         if attribute_to_change == "1":
             player.last_name = self.modify_player_view.get_new_last_name()

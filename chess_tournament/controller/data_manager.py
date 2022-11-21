@@ -3,12 +3,15 @@ from abc import ABC, abstractmethod
 
 
 class SaveData:
+    """Class used to save the data in the database"""
+
     def __init__(self, player_manager, tournament_manager) -> None:
         self.db = TinyDB("db.json")
         self.player_manager = player_manager
         self.tournament_manager = tournament_manager
 
     def insert_player(self):
+        """Insert the player in the player table"""
         players_table = self.db.table("players")
         players_table.truncate()
         all_players = self.player_manager.list_of_player
@@ -16,6 +19,7 @@ class SaveData:
             players_table.insert(player.__dict__)
 
     def insert_tournament(self):
+        """Insert the tournament in the tournament table"""
         all_tournament = self.tournament_manager.tournament_list
 
         tournaments_table = self.db.table("tournaments")
@@ -25,11 +29,14 @@ class SaveData:
             tournaments_table.insert(tournament.serialize())
 
     def save(self):
+        """Insert both player and tournament in the database"""
         self.insert_player()
         self.insert_tournament()
 
 
 class DataRestorer(ABC):
+    """Abstract class that could possibly handle several type of storage"""
+
     @abstractmethod
     def get_player(self):
         """Get the player table from the storage"""
@@ -39,6 +46,9 @@ class DataRestorer(ABC):
 
 
 class RestoreDataTinyDB(DataRestorer):
+    """Class that inherite from the abstract class DataRestorer and
+    that is using TinyDB"""
+
     def __init__(self) -> None:
         self.db = TinyDB("db.json")
         self.player_manager = None
@@ -74,6 +84,7 @@ class RestoreData:
         self.tournament_manager = tournament_manager
 
     def recreate_players(self):
+        """From the database, recreate the player objects"""
         self.player_manager.reset_player_list()
         for player in self.serialized_players:
             self.player_manager.insert_player(
@@ -86,6 +97,7 @@ class RestoreData:
             )
 
     def recreate_tournament(self):
+        """From the database, recreate the tournament objects"""
         self.tournament_manager.clear_tournament()
         for tournament in self.serialized_tournaments:
 

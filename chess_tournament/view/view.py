@@ -4,6 +4,8 @@ from chess_tournament.view import ascii
 
 
 class View:
+    """Generic parent view with useful function for the children"""
+
     def display_selected_tournament(self, selected_tournament):
         """Display the tournament selected by the user"""
         print(f"\nTournoi {selected_tournament} sélectionné")

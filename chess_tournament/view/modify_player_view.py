@@ -2,6 +2,8 @@ from chess_tournament.view.view import View
 
 
 class ModifyPlayerView(View):
+    """View to handle the player modification"""
+
     def which_player_to_modify(self, list_of_player):
         """Ask which player to modify"""
         print("Quel joueur voulez-vous modifier ?\n")

@@ -171,26 +171,31 @@ class TournamentMenu(State):
         )
 
     def create_tournament(self):
+        """Option to create the tournament"""
         self.prepare_display()
         self.tournament_manager.create_tournament()
 
     def display_all_tournament(self):
+        """Option to display all tournaments"""
         self.prepare_display()
         self.tournament_manager.display_all_tournament()
 
     def check_if_selected_tour(self):
+        """Check if there is a selected tour"""
         if not self.tournament_manager.get_tournament_name():
             return False
         else:
             return True
 
     def check_if_tour_playing(self):
+        """Check if the tour is already playing"""
         if self.tournament_manager.tournament.progression == Progress.FIRST_ROUND:
             return False
         else:
             return True
 
     def display_add_player_to_tournament_menu(self):
+        """Option to add a player to a tournament"""
         self.prepare_display()
         if not self.check_if_selected_tour():
             self.view.display_no_tournament_selected()
@@ -206,6 +211,7 @@ class TournamentMenu(State):
             )
 
     def prepare_display(self):
+        """Clean the display"""
         self.view.clean_console()
         self.view.show_banner()
 
@@ -279,22 +285,27 @@ class AddPlayerToTournament(State):
             self.go_back()
 
     def create_player(self):
+        """Create a player"""
         self.prepare_display()
         self.tournament_manager.add_player_to_tournament()
 
     def add_player_to_tournament(self):
+        """Add a player to the tournament"""
         self.prepare_display()
         self.tournament_manager.add_existing_player_to_tournament()
 
     def display_tournament_players(self):
+        """Display the player playing in the tournament"""
         self.prepare_display()
         self.tournament_manager.display_tournament_players()
 
     def remove_player_from_tournament(self):
+        """Remove a player from the tournament"""
         self.prepare_display()
         self.tournament_manager.remove_player_from_tournament()
 
     def prepare_display(self):
+        """Prepare the display"""
         self.view.clean_console()
         self.view.show_banner()
 
@@ -471,6 +482,7 @@ class ReportTournamentPlayer(State):
             self.view.display_all_player_report_options()
 
     def generate_report(self, method="alpha"):
+        """Sort the player by alphabetical order or elo"""
         player_list = self.player_in_asked_tournament
         if method == "alpha":
             player_list.sort(key=lambda x: x.last_name)

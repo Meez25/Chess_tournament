@@ -2,6 +2,8 @@ from chess_tournament.view.view import View
 
 
 class CreateTournamentView(View):
+    """Class that handle the tournament creation view"""
+
     def name_cannot_be_empty(self):
         """Display error that the name is empty"""
         print("Le nom ne peut pas être vide")
