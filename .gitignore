@@ -1,7 +1,6 @@
 /env
 __pycache__/
 *.pyc
-flake-report
 /.vscode
 *.json
 *.flake8
