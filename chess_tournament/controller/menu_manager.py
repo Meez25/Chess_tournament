@@ -4,7 +4,11 @@ from abc import ABC, abstractmethod
 
 from chess_tournament.models.models import Progress, Tournament  # type:ignore
 from chess_tournament.view.tournament_manager_view import TournamentManagerView
-from chess_tournament.controller.data_manager import *
+from chess_tournament.controller.data_manager import (
+    SaveData,
+    RestoreDataTinyDB,
+    RestoreData,
+)
 
 
 class MenuManager:
@@ -446,7 +450,6 @@ class ReportTournamentPlayer(State):
     def ask_tournament(self):
         # Ask for which tournament the report is needed
         tournament_asked = None
-        player_in_asked_tournament = None
         tournament_list = self.tournament_manager.tournament_list
         self.view.display_list_of_tournament(tournament_list)
         if tournament_list:

@@ -65,7 +65,9 @@ class View:
         print(
             (
                 "\n".join(
-                    f"Nom : {round.name}, date de début : {self.format_date(round.start_date)}, date de fin : {self.format_date(round.end_date)}"
+                    f"Nom : {round.name}, date de début : "
+                    f"{self.format_date(round.start_date)}, date de fin : "
+                    f"{self.format_date(round.end_date)}"
                     for round in rounds
                 )
             )

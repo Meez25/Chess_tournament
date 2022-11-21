@@ -1,5 +1,3 @@
-import os
-
 from chess_tournament.view.view import View
 
 
