@@ -74,8 +74,6 @@ class TournamentManagerView(View):
 
     def ask_exit_or_continue(self):
         """Ask if the user wants to continue"""
-        self.clean_console()
-        self.show_banner()
         print("Voulez-vous démarrer le round suivant ou sauvegarder et quitter ?")
         print("Entrée pour continuer, 'Q' pour sauvegarder et quitter\n")
         return input("Entrez votre choix : ")
@@ -98,6 +96,15 @@ class TournamentManagerView(View):
         print("Voici le classement final de ce tournoi : \n")
         for player in ranking:
             print(f"{player[0]} avec {player[1]} points !")
+
+    def display_ranking(self, ranking):
+        """Display the ranking of the tournament"""
+        self.clean_console()
+        self.show_banner()
+        print("Voici le classement actuel : \n")
+        for player in ranking:
+            print(f"{player[0]} avec {player[1]} points !")
+        print()
 
     def announce_matches(self):
         """Introduces match to play"""

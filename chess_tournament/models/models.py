@@ -34,7 +34,10 @@ class Match:
 
     def get_result_formatted(self):
         """Get the result as a nice f-string"""
-        return f"{self.result[0][0].last_name} contre {self.result[1][0].last_name} : {self.result[0][1]} - {self.result[1][1]}"
+        return (
+            f"{self.result[0][0].last_name} contre {self.result[1][0].last_name} "
+            f": {self.result[0][1]} - {self.result[1][1]}"
+        )
 
     def __str__(self):
         return f"{self.player1.last_name} contre {self.player2.last_name}"

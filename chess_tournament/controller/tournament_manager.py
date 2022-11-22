@@ -395,12 +395,17 @@ class TournamentHandler:
         wants_to_continue = True
         if self.tournament.progression == Progress.FIRST_ROUND:
             self.do_first_round()
+
+            self.tournament_manager_view.display_ranking(self.tournament.sort_player())
             wants_to_continue = self.ask_exit_or_continue()
 
         for i in range(self.tournament.progression.value, 4):
             if wants_to_continue:
                 self.do_a_round(i)
                 if self.tournament.progression.value < 4:
+                    self.tournament_manager_view.display_ranking(
+                        self.tournament.sort_player()
+                    )
                     wants_to_continue = self.ask_exit_or_continue()
             else:
                 break
