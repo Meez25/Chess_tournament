@@ -36,10 +36,13 @@ class TournamentManagerView(View):
         return input("Entrez l'index de votre choix : ")
 
     def player_added_to_tournament(self, player):
-        print(
-            f"Le joueur {player.last_name} {player.first_name} "
-            f"a été ajouté au tournoi."
-        )
+        if player:
+            print(
+                f"Le joueur {player.last_name} {player.first_name} "
+                f"a été ajouté au tournoi."
+            )
+        else:
+            print("Veuillez entrer un index.")
 
     def tournament_selected_not_found(self, selected_tournament):
         """Display an error for tournament not found"""
@@ -59,16 +62,11 @@ class TournamentManagerView(View):
         """There is no player in the tournament"""
         print("Aucun joueur n'est ajouté au tournoi\nVeuillez ajouter des joueurs")
 
-    def get_player_to_delete_from_tournament(self):
-        """ask who to delete from the tournament"""
-        player_to_delete = input("[Index] du joueur à supprimer du tournoi: ")
-        return player_to_delete
-
     def player_removed_from_tournament(self):
         print(f"\nJoueur supprimé du tournoi.")
 
     def player_not_found(self, player):
-        print(f'Joueur "{player}" non trouvé')
+        print(f"Joueur non trouvé")
 
     def ask_exit_or_continue(self):
         """Ask if the user wants to continue"""

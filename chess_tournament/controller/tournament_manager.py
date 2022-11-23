@@ -93,8 +93,8 @@ class PlayerInsertor:
             self.player_manager.list_of_player
         )
 
-        self.modify_player_view.clean_console()
-        self.modify_player_view.show_banner()
+        self.view.clean_console()
+        self.view.show_banner()
         if not player_index:
             return
         if not player_index.isdigit():
@@ -103,6 +103,7 @@ class PlayerInsertor:
             self.player_manager.list_of_player
         ):
             return
+        player_object_to_modify = ""
         try:
             player_object_to_modify = self.player_manager.list_of_player[
                 int(player_index)
@@ -114,20 +115,19 @@ class PlayerInsertor:
     def add_existing_player_to_tournament(self):
         """Add an existing player to the current tournament"""
         # If there is no player in the "database", send error message
+        finished_to_add_player = False
+        while not finished_to_add_player:
+            if self.tournament.is_full():
+                self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
+                self.view.press_enter_to_continue()
+                finished_to_add_player = True
+            else:
+                # Display the list of all players so the user can select
 
-        if self.tournament.is_full():
-            self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
-            self.view.press_enter_to_continue()
-        else:
-            # Display the list of all players so the user can select
+                player_object = self.get_player()
 
-            player_object = self.get_player()
-
-            # Get the tournament import to avoid duplicates
-            list_of_tournament_player = self.tournament.list_of_players
-
-            finished_to_add_player = False
-            while not finished_to_add_player:
+                # Get the tournament import to avoid duplicates
+                list_of_tournament_player = self.tournament.list_of_players
                 # Get the choice of the user
                 if self.tournament.is_full():
                     self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
@@ -147,6 +147,7 @@ class PlayerInsertor:
                 else:
                     self.view.player_already_in_tournament()
                     self.view.press_enter_to_continue()
+                    return
 
 
 class TournamentManager:
@@ -319,12 +320,17 @@ class TournamentManager:
         self.tournament_manager_view.display_list_of_tournament(self.tournament_list)
         self.tournament_manager_view.press_enter_to_continue()
 
-    def get_player(self):
+    def get_player(self, mode=None):
         """Ask which player"""
 
-        player_index = self.tournament_manager_view.display_existing_player_to_add(
-            self.player_manager.list_of_player
-        )
+        if mode == "delete":
+            player_index = self.tournament_manager_view.which_player_to_delete(
+                self.tournament.list_of_players
+            )
+        else:
+            player_index = self.tournament_manager_view.display_existing_player_to_add(
+                self.tournament.list_of_players
+            )
 
         self.tournament_manager_view.clean_console()
         self.tournament_manager_view.show_banner()
@@ -333,13 +339,11 @@ class TournamentManager:
         if not player_index.isdigit():
             return
         if not int(player_index) > -1 and int(player_index) < len(
-            self.player_manager.list_of_player
+            self.tournament.list_of_player
         ):
             return
         try:
-            player_object_to_modify = self.player_manager.list_of_player[
-                int(player_index)
-            ]
+            player_object_to_modify = self.tournament.list_of_players[int(player_index)]
         except Exception:
             print(Exception)
         return player_object_to_modify
@@ -393,7 +397,7 @@ class TournamentManager:
 
         else:
 
-            player_to_delete = self.get_player()
+            player_to_delete = self.get_player(mode="delete")
 
             found = False
             if player_to_delete in self.tournament.list_of_players:
