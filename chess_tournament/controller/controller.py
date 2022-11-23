@@ -28,18 +28,11 @@ class Controller:
 
         # self.create_test_data()
 
-    def get_menu_running(self):
+    def run(self):
         """While loop that managed the menu"""
         while True:
             self.menu_manager.print_menu()
             self.menu_manager.get_user_option()
-
-    def get_save_data(self):
-        return self.save_data
-
-    def run(self):
-        """Run the menu"""
-        self.get_menu_running()
 
     def load_objects(self, restorer):
         """Load the players and the tournament in a database"""

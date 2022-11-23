@@ -87,11 +87,3 @@ class MenuView(View):
             "          2 : Par elo\n"
             "          3 : Retour\n"
         )
-
-    def save_success(self):
-        """Display success message on save db"""
-        print("La base de donnée a bien été sauvegardé.")
-
-    def restore_success(self):
-        """Displays success message on restore db"""
-        print("La base de donnée a bien été restauré.")
