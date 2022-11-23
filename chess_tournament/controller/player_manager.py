@@ -1,5 +1,3 @@
-from itertools import count
-
 from chess_tournament.models.models import Player  # type:ignore
 from chess_tournament.view.create_player_view import CreatePlayerView
 from chess_tournament.view.modify_player_view import ModifyPlayerView

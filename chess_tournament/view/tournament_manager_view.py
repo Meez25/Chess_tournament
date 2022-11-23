@@ -63,10 +63,10 @@ class TournamentManagerView(View):
         print("Aucun joueur n'est ajouté au tournoi\nVeuillez ajouter des joueurs")
 
     def player_removed_from_tournament(self):
-        print(f"\nJoueur supprimé du tournoi.")
+        print("\nJoueur supprimé du tournoi.")
 
-    def player_not_found(self, player):
-        print(f"Joueur non trouvé")
+    def player_not_found(self):
+        print("Joueur non trouvé")
 
     def ask_exit_or_continue(self):
         """Ask if the user wants to continue"""

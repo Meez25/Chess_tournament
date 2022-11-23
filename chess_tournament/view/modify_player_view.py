@@ -62,4 +62,4 @@ class ModifyPlayerView(View):
         print("Le elo doit être composé de chiffre.")
 
     def player_not_found(self):
-        print(f"Joueur non trouvé")
+        print("Joueur non trouvé")

@@ -4,11 +4,6 @@ from abc import ABC, abstractmethod
 
 from chess_tournament.models.models import Progress, Tournament  # type:ignore
 from chess_tournament.view.tournament_manager_view import TournamentManagerView
-from chess_tournament.controller.data_manager import (
-    SaveData,
-    RestoreDataTinyDB,
-    RestoreData,
-)
 
 
 class MenuManager:
@@ -62,7 +57,6 @@ class MainMenu(State):
         self.view = view
         self.tournament_manager = tournament_manager
         self.player_manager = player_manager
-        
 
     def print_menu(self) -> None:
         """Display the main menu using the view"""
@@ -93,8 +87,6 @@ class MainMenu(State):
     def go_back(self) -> None:
         """Exit the program"""
         sys.exit()
-
-    
 
 
 class TournamentMenu(State):

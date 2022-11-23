@@ -5,7 +5,6 @@ from chess_tournament.models.models import (
     Round,
     Tournament,
     Progress,
-    Player,
 )  # type:ignore
 from chess_tournament.controller.player_manager import CreatePlayer
 from chess_tournament.view.tournament_manager_view import TournamentManagerView
@@ -200,9 +199,6 @@ class TournamentManager:
                 player1 = match["player1"]
                 last_name = player1["last_name"]
                 first_name = player1["first_name"]
-                birthday = player1["date_of_birth"]
-                sex = player1["sex"]
-                elo = player1["elo"]
 
                 for player in self.player_manager.list_of_player:
                     if (
@@ -216,9 +212,6 @@ class TournamentManager:
                 player2 = match["player2"]
                 last_name = player2["last_name"]
                 first_name = player2["first_name"]
-                birthday = player2["date_of_birth"]
-                sex = player2["sex"]
-                elo = player2["elo"]
 
                 for player in self.player_manager.list_of_player:
                     if (
