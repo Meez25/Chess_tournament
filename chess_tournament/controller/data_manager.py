@@ -93,15 +93,7 @@ class RestoreData:
                 player["date_of_birth"],
                 player["sex"],
                 player["elo"],
-                player["id"],
             )
-
-    def get_latest_unique_id(self):
-        higher_id = 0
-        for player in self.serialized_players:
-            if int(player["id"]) > higher_id:
-                higher_id = int(player["id"])
-        return higher_id
 
     def recreate_tournament(self):
         """From the database, recreate the tournament objects"""

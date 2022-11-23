@@ -53,7 +53,6 @@ class Player:
     date_of_birth: str
     sex: str
     elo: int
-    id: Optional[int] = field(default_factory=count().__next__, init=True)
 
     def __str__(self) -> str:
         return (

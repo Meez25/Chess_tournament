@@ -8,12 +8,13 @@ class TournamentManagerView(View):
         """Ask which player to delete"""
         print("Quel joueur voulez-vous supprimer ?\n")
         print("[Index] - Nom, Prénom, Elo, Sexe\n")
-        for player in list_of_player:
+        for i, player in enumerate(list_of_player):
             print(
-                f"[{player.id}] - {player.last_name}, "
+                f"[{i}] - {player.last_name}, "
                 f"{player.first_name}, {player.elo}, "
                 f"{player.sex}\n"
             )
+        return input("Entrez l'index de votre choix : ")
 
     def tournament_added_successfully(self):
         """Match added successfully"""
@@ -26,15 +27,12 @@ class TournamentManagerView(View):
     def display_existing_player_to_add(self, list_of_player):
         print("Quel joueur voulez-vous ajouter ?\n")
         print("[Index] - Nom, Prénom, Elo, Sexe\n")
-        for player in list_of_player:
+        for i, player in enumerate(list_of_player):
             print(
-                f"[{player.id}] - {player.last_name}, "
+                f"[{i}] - {player.last_name}, "
                 f"{player.first_name}, {player.elo}, "
                 f"{player.sex}"
             )
-        print("\n")
-
-    def get_index_of_player(self):
         return input("Entrez l'index de votre choix : ")
 
     def player_added_to_tournament(self, player):
@@ -66,8 +64,8 @@ class TournamentManagerView(View):
         player_to_delete = input("[Index] du joueur à supprimer du tournoi: ")
         return player_to_delete
 
-    def player_removed_from_tournament(self, player_to_delete):
-        print(f"\nJoueur {player_to_delete} supprimé du tournoi.")
+    def player_removed_from_tournament(self):
+        print(f"\nJoueur supprimé du tournoi.")
 
     def player_not_found(self, player):
         print(f'Joueur "{player}" non trouvé')

@@ -1,3 +1,5 @@
+from itertools import count
+
 from chess_tournament.models.models import Player  # type:ignore
 from chess_tournament.view.create_player_view import CreatePlayerView
 from chess_tournament.view.modify_player_view import ModifyPlayerView
@@ -115,11 +117,9 @@ class PlayerManager:
         self.view.clean_console()
         self.view.show_banner()
 
-    def insert_player(self, last_name, first_name, birthday, sex, elo, id):
+    def insert_player(self, last_name, first_name, birthday, sex, elo):
         """Insert player (used to restore the database)"""
-        self.list_of_player.append(
-            Player(last_name, first_name, birthday, sex, elo, id)
-        )
+        self.list_of_player.append(Player(last_name, first_name, birthday, sex, elo))
 
     def reset_player_list(self):
         self.list_of_player = []
@@ -137,12 +137,11 @@ class ModifyPlayer:
         """Modify a player"""
         if not self.check_if_player():
             return
-        player_to_modify = self.get_player_to_change()
-        if not self.check_if_player_exist(player_to_modify):
-            self.modify_player_view.player_not_found(player_to_modify)
+        player_object = self.get_player_to_change()
+        if not player_object:
+            self.modify_player_view.player_not_found()
             self.modify_player_view.press_enter_to_continue()
             return
-        player_object = self.check_if_player_exist(player_to_modify)
         self.get_attribute_to_change(player_object)
 
     def check_if_player(self):
@@ -157,23 +156,24 @@ class ModifyPlayer:
     def get_player_to_change(self):
         """Ask which player to change"""
         # Ask what is the player to change
-        self.modify_player_view.which_player_to_modify(self.list_of_player)
-        player_to_modify = self.modify_player_view.get_player_to_modify().strip()
+        player_to_modify = self.modify_player_view.which_player_to_modify(
+            self.list_of_player
+        )
         self.modify_player_view.clean_console()
         self.modify_player_view.show_banner()
-        return player_to_modify
-
-    def check_if_player_exist(self, asked_player):
-        """Check if the player chosen by the user exist"""
-        # Check if the number entered by the user match a real player
-        for player in self.list_of_player:
-            if asked_player.isdigit():
-                if int(asked_player) == player.id:
-                    return player
-            else:
-                self.modify_player_view.player_not_found()
-
-        return False
+        if not player_to_modify:
+            return
+        if not player_to_modify.isdigit():
+            return
+        if not int(player_to_modify) > -1 and int(player_to_modify) < len(
+            self.list_of_player
+        ):
+            return
+        try:
+            player_object_to_modify = self.list_of_player[int(player_to_modify)]
+        except Exception:
+            print(Exception)
+        return player_object_to_modify
 
     def get_attribute_to_change(self, player):
         """Ask what to change about the player"""

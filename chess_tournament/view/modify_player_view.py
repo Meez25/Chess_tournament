@@ -8,12 +8,14 @@ class ModifyPlayerView(View):
         """Ask which player to modify"""
         print("Quel joueur voulez-vous modifier ?\n")
         print("[Index] - Nom, Prénom, Elo, Sexe\n")
-        for player in list_of_player:
+        for i, player in enumerate(list_of_player):
             print(
-                f"[{player.id}] - {player.last_name}, "
+                f"[{i}] - {player.last_name}, "
                 f"{player.first_name}, {player.elo}, "
                 f"{player.sex}\n"
             )
+        player_to_modify = input("[Index] du joueur à modifier du tournoi: ")
+        return player_to_modify.strip()
 
     def player_modified(self):
         print("Joueur modifié")
@@ -59,5 +61,5 @@ class ModifyPlayerView(View):
         """Error message : player's elo is not number only"""
         print("Le elo doit être composé de chiffre.")
 
-    def player_not_found(self, player):
-        print(f'Joueur "{player}" non trouvé')
+    def player_not_found(self):
+        print(f"Joueur non trouvé")

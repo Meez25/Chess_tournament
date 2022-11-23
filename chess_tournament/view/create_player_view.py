@@ -44,3 +44,11 @@ class CreatePlayerView(View):
         """Ask for the player's elo"""
         elo = input("Elo ? : ")
         return elo
+
+    def display_empty_elo_error(self):
+        """Error message : player's elo is empty"""
+        print("Le elo n'a pas été renseigné.")
+
+    def display_elo_not_number_error(self):
+        """Error message : player's elo is not number only"""
+        print("Le elo doit être composé de chiffre.")

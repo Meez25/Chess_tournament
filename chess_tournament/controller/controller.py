@@ -21,10 +21,10 @@ class Controller:
         )
         self.save_data = SaveData(self.player_manager, self.tournament_manager)
         self.data_location = RestoreDataTinyDB()
-        self.restorer = RestoreData(
+        restorer = RestoreData(
             self.data_location, self.player_manager, self.tournament_manager
         )
-        self.load_objects(self.restorer)
+        self.load_objects(restorer)
 
         # self.create_test_data()
 
