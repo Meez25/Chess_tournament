@@ -4,17 +4,29 @@ from chess_tournament.controller.tournament_manager import (
 )  # type:ignore
 from chess_tournament.controller.player_manager import PlayerManager  # type:ignore
 from chess_tournament.models.models import Player, Tournament
+from chess_tournament.controller.data_manager import (
+    SaveData,
+    RestoreDataTinyDB,
+    RestoreData,
+)
 
 
 class Controller:
     def __init__(self, view) -> None:
         self.view = view
-        self.player_manager = PlayerManager(self.view)
+        self.player_manager = PlayerManager(self, self.view)
         self.tournament_manager = TournamentManager(self.view, self.player_manager)
         self.menu_manager = MenuManager(
             self.view, self.tournament_manager, self.player_manager
         )
-        self.create_test_data()
+        self.save_data = SaveData(self.player_manager, self.tournament_manager)
+        self.data_location = RestoreDataTinyDB()
+        self.restorer = RestoreData(
+            self.data_location, self.player_manager, self.tournament_manager
+        )
+        self.load_objects(self.restorer)
+
+        # self.create_test_data()
 
     def get_menu_running(self):
         """While loop that managed the menu"""
@@ -22,9 +34,17 @@ class Controller:
             self.menu_manager.print_menu()
             self.menu_manager.get_user_option()
 
+    def get_save_data(self):
+        return self.save_data
+
     def run(self):
         """Run the menu"""
         self.get_menu_running()
+
+    def load_objects(self, restorer):
+        """Load the players and the tournament in a database"""
+        restorer.recreate_players()
+        restorer.recreate_tournament()
 
     def create_test_data(self):
         """Added test data for test purpose"""

@@ -1,6 +1,7 @@
 from chess_tournament.models.models import Player  # type:ignore
 from chess_tournament.view.create_player_view import CreatePlayerView
 from chess_tournament.view.modify_player_view import ModifyPlayerView
+from chess_tournament.controller.data_manager import SaveData
 
 
 class CreatePlayer:
@@ -82,14 +83,17 @@ class CreatePlayer:
 class PlayerManager:
     """Class that manage the players"""
 
-    def __init__(self, view) -> None:
+    def __init__(self, controller, view) -> None:
         self.view = view
+        self.controller = controller
         self.list_of_player = []
+        self.save_data = SaveData(player_manager=self)
 
     def create_player(self):
         """Create a player"""
         player = CreatePlayer().create_player()
         self.list_of_player.append(player)
+        self.save_data.insert_player()
         self.view.press_enter_to_continue()
         self.view.clean_console()
         self.view.show_banner()
@@ -97,8 +101,9 @@ class PlayerManager:
 
     def modify_player(self):
         """Modify a player"""
-        modify_player = ModifyPlayer(self.list_of_player)
+        modify_player = ModifyPlayer(self.list_of_player, self.controller)
         modify_player.modify_player()
+        self.save_data.insert_player()
 
     def display_all_players(self):
         """Display the list of all players"""
@@ -123,8 +128,9 @@ class PlayerManager:
 class ModifyPlayer:
     """Class dedicated to the modification of a player"""
 
-    def __init__(self, list_of_player) -> None:
+    def __init__(self, list_of_player, controller) -> None:
         self.list_of_player = list_of_player
+        self.controller = controller
         self.modify_player_view = ModifyPlayerView()
 
     def modify_player(self):
@@ -136,8 +142,8 @@ class ModifyPlayer:
             self.modify_player_view.player_not_found(player_to_modify)
             self.modify_player_view.press_enter_to_continue()
             return
-        player_to_modify = self.check_if_player_exist(player_to_modify)
-        self.get_attribute_to_change(player_to_modify)
+        player_object = self.check_if_player_exist(player_to_modify)
+        self.get_attribute_to_change(player_object)
 
     def check_if_player(self):
         """Check if there is at least a player"""
@@ -161,8 +167,11 @@ class ModifyPlayer:
         """Check if the player chosen by the user exist"""
         # Check if the number entered by the user match a real player
         for player in self.list_of_player:
-            if int(asked_player) == player.id:
-                return player
+            if asked_player.isdigit():
+                if int(asked_player) == player.id:
+                    return player
+            else:
+                self.modify_player_view.player_not_found()
 
         return False
 

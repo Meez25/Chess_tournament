@@ -148,7 +148,7 @@ class TournamentManagerView(View):
 
     def finished_adding_player(self):
         """Ask if the user is done adding player"""
-        return input("Entrée pour continuer, q pour quitter")
+        return input("Entrée pour continuer, q pour quitter : ")
 
     def must_be_a_number(self):
         """Error, the input must be a number"""

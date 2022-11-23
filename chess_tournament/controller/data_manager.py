@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 class SaveData:
     """Class used to save the data in the database"""
 
-    def __init__(self, player_manager, tournament_manager) -> None:
+    def __init__(self, player_manager=None, tournament_manager=None) -> None:
         self.db = TinyDB("db.json")
         self.player_manager = player_manager
         self.tournament_manager = tournament_manager
@@ -95,6 +95,13 @@ class RestoreData:
                 player["elo"],
                 player["id"],
             )
+
+    def get_latest_unique_id(self):
+        higher_id = 0
+        for player in self.serialized_players:
+            if int(player["id"]) > higher_id:
+                higher_id = int(player["id"])
+        return higher_id
 
     def recreate_tournament(self):
         """From the database, recreate the tournament objects"""
