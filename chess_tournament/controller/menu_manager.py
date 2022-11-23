@@ -62,6 +62,7 @@ class MainMenu(State):
         self.view = view
         self.tournament_manager = tournament_manager
         self.player_manager = player_manager
+        
 
     def print_menu(self) -> None:
         """Display the main menu using the view"""
@@ -85,12 +86,6 @@ class MainMenu(State):
                 ReportMenu(self.view, self.tournament_manager, self.player_manager)
             )
         elif user_option == "4":
-            # Do the save
-            self.save_objects()
-        elif user_option == "5":
-            # Do the load
-            self.load_objects()
-        elif user_option == "6":
             self.go_back()
         self.view.clean_console()
         self.view.show_banner()
@@ -99,24 +94,7 @@ class MainMenu(State):
         """Exit the program"""
         sys.exit()
 
-    def save_objects(self):
-        """Save the players and tournament in a database"""
-        # Serialize Players in a dict
-        SaveData(self.player_manager, self.tournament_manager).save()
-        self.view.save_success()
-        self.view.press_enter_to_continue()
-        # Save the list
-
-    def load_objects(self):
-        """Load the players and the tournament in a database"""
-        data_location = RestoreDataTinyDB()
-        restorer = RestoreData(
-            data_location, self.player_manager, self.tournament_manager
-        )
-        restorer.recreate_players()
-        restorer.recreate_tournament()
-        self.view.restore_success()
-        self.view.press_enter_to_continue()
+    
 
 
 class TournamentMenu(State):

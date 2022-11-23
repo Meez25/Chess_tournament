@@ -10,6 +10,7 @@ from chess_tournament.models.models import (
 from chess_tournament.controller.player_manager import CreatePlayer
 from chess_tournament.view.tournament_manager_view import TournamentManagerView
 from chess_tournament.view.create_tournament_view import CreateTournamentView
+from chess_tournament.controller.data_manager import SaveData
 
 
 class CreateTournament:
@@ -70,59 +71,83 @@ class CreateTournament:
 class PlayerInsertor:
     """Class to add a player in a tournament or add an existing player"""
 
-    def __init__(self, view, list_of_all_player, tournament=None) -> None:
+    def __init__(self, view, player_manager, tournament=None) -> None:
         self.tournament = tournament
         self.view = view
-        self.all_players = list_of_all_player
+        self.player_manager = player_manager
 
     def add_player_to_tournament(self):
         """Add a player to the current tournament"""
         if not self.tournament.is_full():
-            self.tournament.add_player_in_list(CreatePlayer().create_player())
+            player = CreatePlayer().create_player()
+            self.tournament.add_player_in_list(player)
+            self.player_manager.list_of_player.append(player)
         else:
             self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
             self.view.press_enter_to_continue()
+
+    def get_player(self):
+        """Ask which player"""
+
+        player_index = self.view.display_existing_player_to_add(
+            self.player_manager.list_of_player
+        )
+
+        self.view.clean_console()
+        self.view.show_banner()
+        if not player_index:
+            return
+        if not player_index.isdigit():
+            return
+        if not int(player_index) > -1 and int(player_index) < len(
+            self.player_manager.list_of_player
+        ):
+            return
+        player_object_to_modify = ""
+        try:
+            player_object_to_modify = self.player_manager.list_of_player[
+                int(player_index)
+            ]
+        except Exception:
+            print(Exception)
+        return player_object_to_modify
 
     def add_existing_player_to_tournament(self):
         """Add an existing player to the current tournament"""
         # If there is no player in the "database", send error message
+        finished_to_add_player = False
+        while not finished_to_add_player:
+            if self.tournament.is_full():
+                self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
+                self.view.press_enter_to_continue()
+                finished_to_add_player = True
+            else:
+                # Display the list of all players so the user can select
 
-        if self.tournament.is_full():
-            self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
-            self.view.press_enter_to_continue()
-        else:
-            # Display the list of all players so the user can select
-            self.view.display_existing_player_to_add(self.all_players)
+                player_object = self.get_player()
 
-            # Get the tournament import to avoid duplicates
-            list_of_tournament_player = self.tournament.list_of_players
-
-            finished_to_add_player = False
-            while not finished_to_add_player:
+                # Get the tournament import to avoid duplicates
+                list_of_tournament_player = self.tournament.list_of_players
                 # Get the choice of the user
                 if self.tournament.is_full():
                     self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
                     self.view.press_enter_to_continue()
                     return
-                player_index = self.view.get_index_of_player()
-                for player in self.all_players:
-                    if not player_index.isdigit():
-                        self.view.must_be_a_number()
-                        self.view.press_enter_to_continue()
-                        return
-                    if player.id == int(player_index):
-                        # If the player is not already in the tournament
-                        # Add the player to tournament
-                        if player not in list_of_tournament_player:
-                            self.tournament.add_player_in_list(player)
-                            self.view.player_added_to_tournament(player)
-                            user_reply = self.view.finished_adding_player()
-                            if user_reply.lower() == "q":
-                                finished_to_add_player = True
 
-                        else:
-                            self.view.player_already_in_tournament()
-                            self.view.press_enter_to_continue()
+                # If the player is not already in the tournament
+                # Add the player to tournament
+                if player_object not in list_of_tournament_player:
+                    self.tournament.add_player_in_list(player_object)
+                    self.view.player_added_to_tournament(player_object)
+                    user_reply = self.view.finished_adding_player()
+                    if user_reply.lower() == "q":
+                        finished_to_add_player = True
+                        return
+
+                else:
+                    self.view.player_already_in_tournament()
+                    self.view.press_enter_to_continue()
+                    return
 
 
 class TournamentManager:
@@ -134,6 +159,9 @@ class TournamentManager:
         self.tournament_list = []
         self.tournament = None
         self.tournament_manager_view = TournamentManagerView()
+        self.save_data = SaveData(
+            tournament_manager=self, player_manager=self.player_manager
+        )
 
     def clear_tournament(self):
         self.tournament_list = []
@@ -175,8 +203,13 @@ class TournamentManager:
                 birthday = player1["date_of_birth"]
                 sex = player1["sex"]
                 elo = player1["elo"]
-                id = player1["id"]
-                player1_to_add = Player(last_name, first_name, birthday, sex, elo, id)
+
+                for player in self.player_manager.list_of_player:
+                    if (
+                        last_name == player.last_name
+                        and first_name == player.first_name
+                    ):
+                        player1_to_add = player
 
                 player1_score = match["result"]["0"]["1"]
 
@@ -186,8 +219,13 @@ class TournamentManager:
                 birthday = player2["date_of_birth"]
                 sex = player2["sex"]
                 elo = player2["elo"]
-                id = player2["id"]
-                player2_to_add = Player(last_name, first_name, birthday, sex, elo, id)
+
+                for player in self.player_manager.list_of_player:
+                    if (
+                        last_name == player.last_name
+                        and first_name == player.first_name
+                    ):
+                        player2_to_add = player
 
                 player2_score = match["result"]["1"]["1"]
 
@@ -205,20 +243,19 @@ class TournamentManager:
         self.tournament = tournament_to_add
 
         for player in list_of_player:
-            player_to_add = Player(
-                player["last_name"],
-                player["first_name"],
-                player["date_of_birth"],
-                player["sex"],
-                player["elo"],
-                player["id"],
-            )
-            tournament_to_add.add_player_in_list(player_to_add)
+            for original_player in self.player_manager.list_of_player:
+                if (
+                    player["first_name"] == original_player.first_name
+                    and player["last_name"] == original_player.last_name
+                ):
+                    tournament_to_add.add_player_in_list(original_player)
 
     def create_tournament(self):
         tournament = CreateTournament().create_tournament()
         self.tournament_list.append(tournament)
+        self.tournament = tournament
         self.tournament_manager_view.tournament_added_successfully()
+        self.save_data.insert_tournament()
         self.tournament_manager_view.press_enter_to_continue()
 
     def add_existing_player_to_tournament(self):
@@ -229,19 +266,23 @@ class TournamentManager:
         else:
             player_insertor = PlayerInsertor(
                 self.tournament_manager_view,
-                self.player_manager.list_of_player,
-                self.tournament,
+                self.player_manager,
+                tournament=self.tournament,
             )
             player_insertor.add_existing_player_to_tournament()
+            self.save_data.insert_tournament()
+            self.save_data.insert_player()
 
     def add_player_to_tournament(self):
         """Add a player to the current tournament"""
         player_insertor = PlayerInsertor(
             self.tournament_manager_view,
-            self.player_manager.list_of_player,
-            self.tournament,
+            self.player_manager,
+            tournament=self.tournament,
         )
         player_insertor.add_player_to_tournament()
+        self.save_data.insert_tournament()
+        self.save_data.insert_player()
 
     def get_tournament_name(self):
         """Get the current tournament"""
@@ -279,6 +320,34 @@ class TournamentManager:
         self.tournament_manager_view.display_list_of_tournament(self.tournament_list)
         self.tournament_manager_view.press_enter_to_continue()
 
+    def get_player(self, mode=None):
+        """Ask which player"""
+
+        if mode == "delete":
+            player_index = self.tournament_manager_view.which_player_to_delete(
+                self.tournament.list_of_players
+            )
+        else:
+            player_index = self.tournament_manager_view.display_existing_player_to_add(
+                self.tournament.list_of_players
+            )
+
+        self.tournament_manager_view.clean_console()
+        self.tournament_manager_view.show_banner()
+        if not player_index:
+            return
+        if not player_index.isdigit():
+            return
+        if not int(player_index) > -1 and int(player_index) < len(
+            self.tournament.list_of_player
+        ):
+            return
+        try:
+            player_object_to_modify = self.tournament.list_of_players[int(player_index)]
+        except Exception:
+            print(Exception)
+        return player_object_to_modify
+
     def delete_tournament(self):
         """Ask the user which tournament to delete"""
         self.tournament_manager_view.display_list_of_tournament(self.tournament_list)
@@ -290,6 +359,7 @@ class TournamentManager:
             for tournament in self.tournament_list:
                 if tournament.name.lower() == tournament_to_delete.lower():
                     self.tournament_list.remove(tournament)
+                    self.save_data.insert_tournament()
                     self.tournament_manager_view.display_deleted_tournament(
                         tournament_to_delete
                     )
@@ -326,25 +396,16 @@ class TournamentManager:
             self.tournament_manager_view.press_enter_to_continue()
 
         else:
-            self.tournament_manager_view.which_player_to_delete(
-                self.tournament.list_of_players
-            )
-            player_to_delete = (
-                self.tournament_manager_view.get_player_to_delete_from_tournament().strip()
-            )
-            if not player_to_delete.isdigit():
-                self.tournament_manager.view.must_be_a_numer()
-                self.tournament_manager_view.press_enter_to_continue()
-                return
+
+            player_to_delete = self.get_player(mode="delete")
+
             found = False
-            for player in self.tournament.list_of_players:
-                if int(player_to_delete) == player.id:
-                    found = True
-                    self.tournament.remove_player_in_list(player)
-                    self.tournament_manager_view.player_removed_from_tournament(
-                        int(player_to_delete)
-                    )
-                    self.tournament_manager_view.press_enter_to_continue()
+            if player_to_delete in self.tournament.list_of_players:
+                found = True
+                self.tournament.remove_player_in_list(player_to_delete)
+                self.tournament_manager_view.player_removed_from_tournament()
+                self.save_data.insert_tournament()
+                self.tournament_manager_view.press_enter_to_continue()
             if not found:
                 self.tournament_manager_view.player_not_found(player_to_delete)
                 self.tournament_manager_view.press_enter_to_continue()
@@ -377,7 +438,7 @@ class TournamentManager:
             return
 
         tournament_handler = TournamentHandler(
-            self.tournament, self.tournament_manager_view
+            self.tournament, self.tournament_manager_view, self.save_data
         )
         tournament_handler.handle_tournament()
 
@@ -385,9 +446,10 @@ class TournamentManager:
 class TournamentHandler:
     """Class that handle the tournament"""
 
-    def __init__(self, tournament, tournament_view) -> None:
+    def __init__(self, tournament, tournament_view, save_data) -> None:
         self.tournament = tournament
         self.tournament_manager_view = tournament_view
+        self.save_data = save_data
 
     def handle_tournament(self):
 
@@ -395,13 +457,14 @@ class TournamentHandler:
         wants_to_continue = True
         if self.tournament.progression == Progress.FIRST_ROUND:
             self.do_first_round()
-
+            self.save_data.insert_tournament()
             self.tournament_manager_view.display_ranking(self.tournament.sort_player())
             wants_to_continue = self.ask_exit_or_continue()
 
         for i in range(self.tournament.progression.value, 4):
             if wants_to_continue:
                 self.do_a_round(i)
+                self.save_data.insert_tournament()
                 if self.tournament.progression.value < 4:
                     self.tournament_manager_view.display_ranking(
                         self.tournament.sort_player()

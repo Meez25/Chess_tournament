@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 class SaveData:
     """Class used to save the data in the database"""
 
-    def __init__(self, player_manager, tournament_manager) -> None:
+    def __init__(self, player_manager=None, tournament_manager=None) -> None:
         self.db = TinyDB("db.json")
         self.player_manager = player_manager
         self.tournament_manager = tournament_manager
@@ -93,7 +93,6 @@ class RestoreData:
                 player["date_of_birth"],
                 player["sex"],
                 player["elo"],
-                player["id"],
             )
 
     def recreate_tournament(self):

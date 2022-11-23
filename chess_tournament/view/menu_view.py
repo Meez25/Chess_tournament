@@ -30,9 +30,7 @@ class MenuView(View):
             "          1 : Gestion des tournois\n"
             "          2 : Gérer les joueurs\n"
             "          3 : Rapports\n"
-            "          4 : Sauvegarder\n"
-            "          5 : Charger\n"
-            "          6 : Quitter l'application\n"
+            "          4 : Quitter l'application\n"
         )
 
     def display_player_menu(self):
