@@ -44,10 +44,6 @@ class TournamentManagerView(View):
         else:
             print("Veuillez entrer un index.")
 
-    def tournament_selected_not_found(self, selected_tournament):
-        """Display an error for tournament not found"""
-        print(f"Tournoi {selected_tournament} non trouvé")
-
     def get_tournament_to_delete(self):
         tournament_to_delete = input(
             "Nom du tournoi à supprimer (Entrée pour annuler): "

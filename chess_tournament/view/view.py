@@ -36,8 +36,11 @@ class View:
         print("Aucun tournoi n'est sélectionné\nVeuillez sélectionner un tournoi.")
 
     def display_list_of_player(self, list_of_player):
-        for player in list_of_player:
-            print(player)
+        if not list_of_player:
+            print("Il n'y a pas de joueur.")
+        else:
+            for player in list_of_player:
+                print(player)
 
     def press_enter_to_continue(self):
         input("\nAppuyez sur Entrée pour continuer...\n")
@@ -51,6 +54,10 @@ class View:
 
     def format_date(self, date: datetime):
         return date.strftime("%d/%m/%y %H:%M")
+
+    def tournament_selected_not_found(self, selected_tournament):
+        """Display an error for tournament not found"""
+        print(f"Tournoi {selected_tournament} non trouvé")
 
     def display_rounds(self, rounds):
         """Display the list of rounds"""

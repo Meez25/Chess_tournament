@@ -55,22 +55,14 @@ class ModifyPlayer:
         """Ask what to change about the player"""
         attribute_to_change = self.modify_player_view.get_modify_element(player)
         if attribute_to_change == "1":
-            player.last_name = self.modify_player_view.get_new_last_name()
-            self.modify_player_view.player_modified()
-
-        elif attribute_to_change == "2":
-            player.first_name = self.modify_player_view.get_new_first_name()
-            self.modify_player_view.player_modified()
-
-        elif attribute_to_change == "3":
             player.date_of_birth = self.modify_player_view.get_new_birthday()
             self.modify_player_view.player_modified()
 
-        elif attribute_to_change == "4":
+        elif attribute_to_change == "2":
             player.sex = self.modify_player_view.get_new_sex()
             self.modify_player_view.player_modified()
 
-        elif attribute_to_change == "5":
+        elif attribute_to_change == "3":
             new_elo = self.modify_player_view.get_new_elo()
             try:
                 new_elo_int = int(new_elo)

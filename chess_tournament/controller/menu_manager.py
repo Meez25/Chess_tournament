@@ -405,9 +405,12 @@ class ReportTournamentPlayer(State):
 
     def print_menu(self) -> None:
         """Display the player menu by calling the view"""
-        self.ask_tournament()
+        self.output = self.ask_tournament()
 
     def get_user_option(self) -> None:
+        if not self.output:
+            self.go_back()
+            return
         user_option = self.view.get_user_option()
         if user_option == "1":
             self.generate_report("alpha")
@@ -432,24 +435,32 @@ class ReportTournamentPlayer(State):
         # Ask for which tournament the report is needed
         tournament_asked = None
         tournament_list = self.tournament_manager.tournament_list
-        self.view.display_list_of_tournament(tournament_list)
-        if tournament_list:
+        found = 0
+        while not found:
+            self.view.clean_console()
+            self.view.show_banner()
+            self.view.display_list_of_tournament(tournament_list)
+            if tournament_list:
 
-            tournament_to_select = self.view.get_tournament_to_select().strip()
-            found = 0
-            for tournament in tournament_list:
-                if tournament.name.lower() == tournament_to_select.lower():
-                    tournament_asked = tournament
-                    self.view.display_selected_tournament(tournament_to_select)
-                    found = 1
-                    break
-            if not found:
-                self.view.tournament_selected_not_found(tournament_to_select)
+                tournament_to_select = self.view.get_tournament_to_select().strip()
+                for tournament in tournament_list:
+                    if tournament.name.lower() == tournament_to_select.lower():
+                        tournament_asked = tournament
+                        self.view.display_selected_tournament(tournament_to_select)
+                        found = 1
+                        break
+                if not found:
+                    self.view.tournament_selected_not_found(tournament_to_select)
+                    self.view.press_enter_to_continue()
+            else:
+                found = 1
                 self.view.press_enter_to_continue()
+                return False
 
-        if isinstance(tournament_asked, Tournament):
-            self.player_in_asked_tournament = tournament_asked.list_of_players
-            self.view.display_all_player_report_options()
+            if isinstance(tournament_asked, Tournament):
+                self.player_in_asked_tournament = tournament_asked.list_of_players
+                self.view.display_all_player_report_options()
+                return True
 
     def generate_report(self, method="alpha"):
         player_list = self.player_in_asked_tournament

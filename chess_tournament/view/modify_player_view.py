@@ -24,12 +24,10 @@ class ModifyPlayerView(View):
         """Ask what attribute to modify on the player"""
         print(
             f"Que voulez-vous modifier ?\n\n"
-            f"          1 : Nom ({player.last_name})\n"
-            f"          2 : Prénom ({player.first_name})\n"
-            f"          3 : Date de naissance ({player.date_of_birth})\n"
-            f"          4 : Sexe ({player.sex})\n"
-            f"          5 : Elo ({player.elo})\n"
-            f"          6 : Retour\n"
+            f"          1 : Date de naissance ({player.date_of_birth})\n"
+            f"          2 : Sexe ({player.sex})\n"
+            f"          3 : Elo ({player.elo})\n"
+            f"          4 : Retour\n"
         )
         return input("Entrez votre choix : ")
 
@@ -37,12 +35,6 @@ class ModifyPlayerView(View):
         """ask who to modify"""
         player_to_modify = input("[Index] du joueur à modifier du tournoi: ")
         return player_to_modify
-
-    def get_new_last_name(self):
-        return input("Nouveau nom : ")
-
-    def get_new_first_name(self):
-        return input("Nouveau prénom : ")
 
     def get_new_birthday(self):
         return input("Nouvelle date de naissance : ")
