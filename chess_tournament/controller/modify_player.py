@@ -48,7 +48,7 @@ class ModifyPlayer:
         try:
             player_object_to_modify = self.list_of_player[int(player_to_modify)]
         except Exception:
-            print(Exception)
+            player_object_to_modify = ""
         return player_object_to_modify
 
     def get_attribute_to_change(self, player):
