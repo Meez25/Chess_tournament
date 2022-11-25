@@ -126,9 +126,12 @@ class TournamentManager:
                 self.player_manager,
                 tournament=self.tournament,
             )
-            player_insertor.add_existing_player_to_tournament()
-            self.save_data.insert_tournament()
-            self.save_data.insert_player()
+            output = player_insertor.add_existing_player_to_tournament()
+            if not output:
+                return
+            else:
+                self.save_data.insert_tournament()
+                self.save_data.insert_player()
 
     def add_player_to_tournament(self):
         """Add a player to the current tournament"""

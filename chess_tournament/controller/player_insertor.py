@@ -65,7 +65,7 @@ class PlayerInsertor:
                 if self.tournament.is_full():
                     self.view.enough_number_of_player(self.tournament.NUMBER_OF_PLAYER)
                     self.view.press_enter_to_continue()
-                    return
+                    return False
 
                 # If the player is not already in the tournament
                 # Add the player to tournament
@@ -80,4 +80,4 @@ class PlayerInsertor:
                 else:
                     self.view.player_already_in_tournament()
                     self.view.press_enter_to_continue()
-                    return
+                    return False
